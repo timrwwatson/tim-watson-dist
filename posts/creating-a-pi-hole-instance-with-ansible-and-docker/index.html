@@ -1,0 +1,256 @@
+<!DOCTYPE html><html lang="en"><head><style>:where(img){height:auto;width:auto}</style>
+    <meta charset="UTF-8">
+    <meta content="width=device-width" name="viewport">
+    <link href="/favicon.svg" rel="icon" type="image/svg+xml">
+    <link href="https://tim-watson.com/posts/creating-a-pi-hole-instance-with-ansible-and-docker/" rel="canonical">
+    <meta content="Astro v2.4.5" name="generator">
+
+    <!-- General Meta Tags -->
+    <title>Creating a Pi Hole instance with Ansible and Docker</title>
+    <meta content="Creating a Pi Hole instance with Ansible and Docker" name="title">
+    <meta content="Automating a Pi-hole installation onto a Raspberry Pi using Docker and Ansible" name="description">
+    <meta content="Tim Watson" name="author">
+    <link href="/sitemap-index.xml" rel="sitemap">
+
+    <!-- Open Graph / Facebook -->
+    <meta content="Creating a Pi Hole instance with Ansible and Docker" property="og:title">
+    <meta content="Automating a Pi-hole installation onto a Raspberry Pi using Docker and Ansible" property="og:description">
+    <meta content="https://tim-watson.com/posts/creating-a-pi-hole-instance-with-ansible-and-docker/" property="og:url">
+    <meta content="https://tim-watson.com/Creating%20a%20Pi%20Hole%20instance%20with%20Ansible%20and%20Docker.png" property="og:image">
+
+    <!-- Twitter -->
+    <meta content="summary_large_image" property="twitter:card">
+    <meta content="https://tim-watson.com/posts/creating-a-pi-hole-instance-with-ansible-and-docker/" property="twitter:url">
+    <meta content="Creating a Pi Hole instance with Ansible and Docker" property="twitter:title">
+    <meta content="Automating a Pi-hole installation onto a Raspberry Pi using Docker and Ansible" property="twitter:description">
+    <meta content="https://tim-watson.com/Creating%20a%20Pi%20Hole%20instance%20with%20Ansible%20and%20Docker.png" property="twitter:image">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com" rel="preconnect">
+    <link href="https://fonts.gstatic.com" rel="preconnect" crossorigin="">
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;display=swap" rel="stylesheet">
+
+    
+
+    <script src="/toggle-theme.js"></script>
+  <link href="/_astro/about.dde1c6e2.css" rel="stylesheet">
+<link href="/_astro/about.6c7fdb57.css" rel="stylesheet">
+<link href="/_astro/_slug_.2df189ef.css" rel="stylesheet">
+<link href="/_astro/_slug_.41a32359.css" rel="stylesheet">
+<link href="/_astro/_slug_.6f76ef08.css" rel="stylesheet">
+<link href="/_astro/_slug_.ce5ea344.css" rel="stylesheet"><script type="module">const e=document.querySelector(".hamburger-menu"),n=document.querySelector(".menu-icon"),u=document.querySelector("#menu-items");e?.addEventListener("click",()=>{let t="true"===e.getAttribute("aria-expanded");n?.classList.toggle("is-active"),e.setAttribute("aria-expanded",t?"false":"true"),e.setAttribute("aria-label",t?"Open Menu":"Close Menu"),u?.classList.toggle("display-none")});</script></head>
+  <body>
+    
+  <header class="astro-3EF6KSR2">
+  <a href="#main-content" class="astro-3EF6KSR2" id="skip-to-content">Skip to content</a>
+  <div class="astro-3EF6KSR2 nav-container">
+    <div class="astro-3EF6KSR2 top-nav-wrap">
+      <a href="/" class="astro-3EF6KSR2 logo">
+        Tim Watson's Blog
+      </a>
+      <nav class="astro-3EF6KSR2" id="nav-menu">
+        <button class="astro-3EF6KSR2 focus-outline hamburger-menu" aria-label="Open Menu" aria-controls="menu-items" aria-expanded="false">
+          <svg class="astro-3EF6KSR2 menu-icon" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round" fill="none" height="24" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" width="24">
+            <line x1="7" x2="21" y1="12" y2="12" class="astro-3EF6KSR2 line"></line>
+            <line x1="3" x2="21" y1="6" y2="6" class="astro-3EF6KSR2 line"></line>
+            <line x1="12" x2="21" y1="18" y2="18" class="astro-3EF6KSR2 line"></line>
+            <line x1="18" x2="6" y1="6" y2="18" class="astro-3EF6KSR2 close"></line>
+            <line x1="6" x2="18" y1="6" y2="18" class="astro-3EF6KSR2 close"></line>
+          </svg>
+        </button>
+        <ul class="astro-3EF6KSR2 display-none sm:flex" id="menu-items">
+          <li class="astro-3EF6KSR2">
+            <a href="/about" class="astro-3EF6KSR2">
+              About
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/posts" class="astro-3EF6KSR2">
+              Posts
+            </a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <a href="/tags" class="astro-3EF6KSR2">
+              Tags
+            </a>
+          </li>
+          
+          <li class="astro-3EF6KSR2">
+            <a href="/search" class="astro-3EF6KSR2 focus-outline astro-5EUNQZKT group inline-block p-3 sm:p-1" tabindex="0" title="Search" aria-label="search">
+  
+              <svg class="astro-3EF6KSR2 scale-125 sm:scale-100" xmlns="http://www.w3.org/2000/svg"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3EF6KSR2"></path>
+              </svg>
+            
+</a>
+          </li>
+          <li class="astro-3EF6KSR2">
+            <button class="astro-3EF6KSR2 focus-outline" aria-label="auto" aria-live="polite" id="theme-btn" title="Toggles light &amp; dark">
+                  <svg class="astro-3EF6KSR2" xmlns="http://www.w3.org/2000/svg" id="moon-svg">
+                    <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                  <svg class="astro-3EF6KSR2" xmlns="http://www.w3.org/2000/svg" id="sun-svg">
+                    <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3EF6KSR2"></path>
+                  </svg>
+                </button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </div>
+  <div class="max-w-7xl mx-auto px-4">
+  <hr aria-hidden="true" class="border-skin-line">
+</div>
+</header>
+  <div class="astro-VJ4TPSPI flex justify-start max-w-7xl mx-auto px-2 w-full">
+    <button class="astro-VJ4TPSPI flex focus-outline hover:opacity-75 mb-2 mt-8" onclick="history.back()">
+      <svg class="astro-VJ4TPSPI" xmlns="http://www.w3.org/2000/svg"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-VJ4TPSPI"></path>
+      </svg><span class="astro-VJ4TPSPI">Go back</span>
+    </button>
+  </div>
+  <main class="astro-VJ4TPSPI" id="main-content">
+    <h1 class="astro-VJ4TPSPI post-title">Creating a Pi Hole instance with Ansible and Docker</h1>
+    <div class="astro-VJ4TPSPI flex items-center my-2 opacity-80 space-x-2"><svg class="inline-block fill-skin-base h-6 scale-100 w-6" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Posted on:</span><span class="italic text-base">February 6, 2022<span aria-hidden="true"> | </span><span class="sr-only">&nbsp;at&nbsp;</span>08:00 PM</span></div>
+    <article class="astro-VJ4TPSPI max-w-7xl mx-auto mt-8 prose" id="article" role="article">
+      <h2 id="table-of-contents">Table of contents</h2>
+<p></p><details><summary>Open Table of contents</summary><p></p>
+<ul>
+<li><a href="#preface">Preface</a></li>
+<li><a href="#version-1">Version 1</a></li>
+<li><a href="#version-2">Version 2</a></li>
+<li><a href="#summary">Summary</a></li>
+<li><a href="#features">Features:</a></li>
+<li><a href="#things-that-maybe-still-could-be-improved">Things that maybe still could be improved?</a></li>
+</ul>
+<p></p></details><p></p>
+<h2 id="preface">Preface</h2>
+<p>Having been given a Raspberry Pi 3B+ for my birthday many months ago, I had flirted with a few ideas of what to do with it. Attaching it to a drone, doing some facial recognition and firing some foam darts at my flat mates was high up on my list … But as they had given it to me it seemed a little bit harsh. Around New Years I came across a few “self hosting” videos and I decided I would play around with something in that realm. I quite liked the idea of a NAS or password manager but didn’t quite want to jump that deep into “self hosting”, so instead I decided to go with Pi Hole advert blocking and trying to work in some automatic setup using Ansible and some best practices.</p>
+<p>Pi Hole
+Ansible
+Self Hosting video example</p>
+<h2 id="version-1">Version 1</h2>
+<p>Starting with the basics, I went out and found a github repo that would do some security tweaks on top of a default Raspbian OS install. The repo is pretty old now but seemed like a good place to start from and to modify further as I wanted to run the whole thing in Docker. Taking this, I started my own github repo, disabled a few of the features that would get in the way at the beginning (like ssh keys) and added a few new UFW rules that the Pi Hole documentation recommends. Doing this was actually pretty straight forward, in fact the much harder bit was setting up a VM of Raspbian to test with.</p>
+<pre class="astro-code one-dark-pro" is:raw="" style="white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#61afef">-</span><span style="color:#abb2bf"> </span><span style="color:#98c379">name:</span><span style="color:#abb2bf"> </span><span style="color:#98c379">Pi</span><span style="color:#abb2bf"> </span><span style="color:#98c379">hole</span><span style="color:#abb2bf"> </span><span style="color:#98c379">open</span><span style="color:#abb2bf"> </span><span style="color:#98c379">port</span><span style="color:#abb2bf"> </span><span style="color:#d19a66">80</span><span style="color:#abb2bf"> </span><span style="color:#98c379">tcp</span></span>
+<span class="line"><span style="color:#abb2bf">        </span><span style="color:#61afef">ufw:</span></span>
+<span class="line"><span style="color:#abb2bf">          </span><span style="color:#61afef">rule:</span><span style="color:#abb2bf"> </span><span style="color:#98c379">allow</span></span>
+<span class="line"><span style="color:#abb2bf">          </span><span style="color:#61afef">port:</span><span style="color:#abb2bf"> </span><span style="color:#98c379">'80'</span></span>
+<span class="line"><span style="color:#abb2bf">          </span><span style="color:#61afef">proto:</span><span style="color:#abb2bf"> </span><span style="color:#98c379">tcp</span></span></code></pre>
+<p>Ultimately, I thought it would be easier while I was making small changes to my Ansible setups to have a VM snapshot that I could role back. Once I got this setup using Virtual Box it worked quite well for both Pi Hole and the security/firewall/permission changes. But it didn’t for Docker. The version of Docker on the VM and the one for the Pi were different so when Ansible would try to install it, it wouldn’t find a corresponding version. In the end, I bit the bullet and had to do the process of taking out the memory card after each run of my script and then wiping it, to test new changes to my setup.</p>
+<p>At this point, I took a little break from the mini-project as I had managed to get my script to install Docker and Pi Hole (with configurations), then modify the user and settings of the Pi to make it (seemingly?) more secure and instead decided to use my slightly less advert heavy internet for a week or so (I also bricked my router trying to get it to use the Pi as the DNS server).</p>
+<h2 id="version-2">Version 2</h2>
+<p>However, I still had this nagging feeling I hadn’t quite finished. I still wanted to get it to update more gracefully and I felt like I could make the Pi Hole install a bit more complete because I hadn’t got the DNS stuff to work with my router. I then came across this video, describing Unbound and why and how to use it with Pi Hole. This seemed like a good addition to the project and didn’t seem like it would be too difficult to do either…</p>
+<p>The updates issue was easy enough to solve, using another container called Watchtower which will search for updates for each of the running containers in Docker based on a schedule. In this case I set it up using CRON. Helpfully the site I was using <a href="https://crontab.guru/">https://crontab.guru/</a> and Watchtower have a slightly different syntax. The latter starts with a seconds column but the site does not, so it took me a hot second to diagnose why my CRON jobs weren’t running.</p>
+<pre class="astro-code one-dark-pro" is:raw="" style="white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#7f848e;font-style:italic"># CRON job to run every saturday morning at 2am, note the seconds coloumn at the beginning (left most column).</span></span>
+<span class="line"><span style="color:#7f848e;font-style:italic"># Sites like: https://crontab.guru/ don't include it !</span></span>
+<span class="line"><span style="color:#61afef">WATCHTOWER_CRON:</span><span style="color:#abb2bf"> </span><span style="color:#98c379">"0 0 2 * * SAT"</span></span></code></pre>
+<p>The Unbound recursive DNS resolver on the other hand was actually quite hard to set up in Docker AND to get working with Pi Hole. Having taken heavy inspiration from other repositories so far, I couldn’t quite work out the settings and configuration that Ansible and Docker needed to get both Pi Hole and Unbound to interact and co-operate. In the end I found a blog post which prompted me to change my Docker networking and ultimately I found a few errors in the logs about the incorrect type of network adapters specified with other options I was trying to use. That lead me to use network mode: host which worked with both Pi Hole and Unbound. Retrospectively now seeing the Pi Hole documentation while writing this post I noticed this setting is recommended when installing Pi Hole via Docker, which if I had seen it earlier, would have saved me a fair amount of time.</p>
+<pre class="astro-code one-dark-pro" is:raw="" style="white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#abb2bf">- name: Start/Update pihole container</span></span>
+<span class="line"><span style="color:#abb2bf">  docker_container:</span></span>
+<span class="line"><span style="color:#abb2bf">    name: pihole</span></span>
+<span class="line"><span style="color:#abb2bf">    image: </span><span style="color:#98c379">"{{ pihole_image }}"</span></span>
+<span class="line"><span style="color:#abb2bf">    pull: yes</span></span>
+<span class="line"><span style="color:#abb2bf">    restart_policy: unless-stopped</span></span>
+<span class="line"><span style="color:#abb2bf">    env:</span></span>
+<span class="line"><span style="color:#abb2bf">      TZ: </span><span style="color:#98c379">"{{ timezone }}"</span></span>
+<span class="line"><span style="color:#abb2bf">      WEBPASSWORD: </span><span style="color:#98c379">"{{ pihole_webpassword }}"</span></span>
+<span class="line"><span style="color:#abb2bf">      PIHOLE_DNS_: </span><span style="color:#98c379">"{{ pihole_dns }}"</span></span>
+<span class="line"><span style="color:#abb2bf">      ServerIP: </span><span style="color:#98c379">"{{ pihole_ip }}"</span></span>
+<span class="line"><span style="color:#abb2bf">      hostname: </span><span style="color:#98c379">"pi.hole"</span></span>
+<span class="line"><span style="color:#abb2bf">    network_mode: host</span></span>
+<span class="line"><span style="color:#abb2bf">    volumes:</span></span>
+<span class="line"><span style="color:#abb2bf">      - </span><span style="color:#98c379">"/home/{{ ansible_user }}/pihole/pihole/:/etc/pihole/"</span></span>
+<span class="line"><span style="color:#abb2bf">      - </span><span style="color:#98c379">"/home/{{ ansible_user }}/pihole/dnsmasq.d/:/etc/dnsmasq.d/"</span></span></code></pre>
+<h2 id="summary">Summary</h2>
+<p>Having finished setting up the Pi Hole, it now seems to be working as intended as can be seen below, so I think I am pretty much done with this project unless I come across something that would improve the security or should really be changed (configuration wise).</p>
+<img alt="Pi-hole Dashboard" decoding="async" loading="lazy" src="../src/images/pihole/raspbi.png" title="Pi-hole Dashboard" width="768">
+<h2 id="features">Features:</h2>
+<ul>
+<li>Ansible Script that modifies a Pi Install</li>
+<li>Installs Docker Containers
+<ul>
+<li>Watchtower for Updates</li>
+<li>Pi Hole</li>
+<li>Unbound</li>
+</ul>
+</li>
+<li>Change user and other security related settings on the Pi</li>
+</ul>
+<h2 id="things-that-maybe-still-could-be-improved">Things that maybe still could be improved?</h2>
+<ul>
+<li>Using Ansible vault or something nicer to clean up the vars, especially the passwords and usernames</li>
+<li>Clean up the variable files in general, add a naming scheme</li>
+<li>Back up or add some form automatic configuration backup to the Pi</li>
+</ul>
+<p>Lots of inspiration was taken from other repositories as well as blog posts that should all be found in the Readme in my Github Repository along with all of the code for this project.</p>
+    </article>
+
+    <ul class="astro-VJ4TPSPI tags-container">
+      <li class="astro-BLWJYJPT inline-block my-1 underline-offset-4">
+  <a href="/tags/pi-hole" class="astro-BLWJYJPT group pr-2 text-sm">
+    <svg class="astro-BLWJYJPT scale-75" xmlns="http://www.w3.org/2000/svg"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">pi-hole</span>
+  </a>
+</li><li class="astro-BLWJYJPT inline-block my-1 underline-offset-4">
+  <a href="/tags/docker" class="astro-BLWJYJPT group pr-2 text-sm">
+    <svg class="astro-BLWJYJPT scale-75" xmlns="http://www.w3.org/2000/svg"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">docker</span>
+  </a>
+</li><li class="astro-BLWJYJPT inline-block my-1 underline-offset-4">
+  <a href="/tags/ansible" class="astro-BLWJYJPT group pr-2 text-sm">
+    <svg class="astro-BLWJYJPT scale-75" xmlns="http://www.w3.org/2000/svg"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">ansible</span>
+  </a>
+</li><li class="astro-BLWJYJPT inline-block my-1 underline-offset-4">
+  <a href="/tags/automation" class="astro-BLWJYJPT group pr-2 text-sm">
+    <svg class="astro-BLWJYJPT scale-75" xmlns="http://www.w3.org/2000/svg"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-BLWJYJPT"></path>
+    </svg>
+    &nbsp;<span class="astro-BLWJYJPT">automation</span>
+  </a>
+</li>
+    </ul>
+  </main>
+  <footer class="astro-SZ7XMLTE mt-auto">
+  <div class="max-w-7xl mx-auto px-0">
+  <hr aria-hidden="true" class="border-skin-line">
+</div>
+  <div class="astro-SZ7XMLTE footer-wrapper">
+    <div class="astro-UPU6FZXR flex social-icons">
+  <a href="https://github.com/timrwwatson" class="inline-block astro-5EUNQZKT group astro-UPU6FZXR link-button" tabindex="0" title=" Tim Watson on Github">
+  
+        <svg class="icon-tabler" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 0h24v24H0z" fill="none" stroke="none"></path>
+    <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path>
+  </svg>
+      
+</a><a href="https://www.linkedin.com/in/timothy-r-w-watson/" class="inline-block astro-5EUNQZKT group astro-UPU6FZXR link-button" tabindex="0" title="Tim Watson on LinkedIn">
+  
+        <svg class="icon-tabler" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M0 0h24v24H0z" fill="none" stroke="none"></path>
+    <rect height="16" rx="2" width="16" x="4" y="4"></rect>
+    <line x1="8" x2="8" y1="11" y2="16"></line>
+    <line x1="8" x2="8" y1="8" y2="8.01"></line>
+    <line x1="12" x2="12" y1="16" y2="11"></line>
+    <path d="M16 16v-3a2 2 0 0 0 -4 0"></path>
+  </svg>
+      
+</a><a href="mailto:contact@tim-watson.com" class="inline-block astro-5EUNQZKT group astro-UPU6FZXR link-button" tabindex="0" title="Send an email to Tim Watson">
+  
+        <svg class="icon-tabler" xmlns="http://www.w3.org/2000/svg" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M0 0h24v24H0z" fill="none" stroke="none"></path>
+      <rect height="14" rx="2" width="18" x="3" y="5"></rect>
+      <polyline points="3 7 12 13 21 7"></polyline>
+    </svg>
+      
+</a>
+</div>
+    <div class="astro-SZ7XMLTE copyright-wrapper">
+      <span class="astro-SZ7XMLTE">Copyright © 2023</span>
+      <span class="astro-SZ7XMLTE separator">&nbsp;|&nbsp;</span>
+      <span class="astro-SZ7XMLTE">All rights reserved.</span>
+    </div>
+  </div>
+</footer>
+
+  </body></html>
