@@ -1,17 +1,126 @@
-<!DOCTYPE html><html lang="en" class="scroll-smooth"><head><meta charset="UTF-8"><style>:where(img){height:auto}</style><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="canonical" href="https://tim-watson.com/posts/migrating-my-blog-to-a-static-astro-site/"><meta name="generator" content="Astro v4.2.4"><!-- General Meta Tags --><title>Migrating my Wordpress blog to Astro</title><meta name="title" content="Migrating my Wordpress blog to Astro"><meta name="description" content="Migrating my blog to Astro"><meta name="author" content="Tim Watson"><link rel="sitemap" href="/sitemap-index.xml"><!-- Open Graph / Facebook --><meta property="og:title" content="Migrating my Wordpress blog to Astro"><meta property="og:description" content="Migrating my blog to Astro"><meta property="og:url" content="https://tim-watson.com/posts/migrating-my-blog-to-a-static-astro-site/"><meta property="og:image" content="https://tim-watson.com/"><!-- Article Published/Modified time --><meta property="article:published_time" content="2023-07-13T20:00:35.000Z"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tim-watson.com/posts/migrating-my-blog-to-a-static-astro-site/"><meta property="twitter:title" content="Migrating my Wordpress blog to Astro"><meta property="twitter:description" content="Migrating my blog to Astro"><meta property="twitter:image" content="https://tim-watson.com/"><!-- Google Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&amp;display=swap" rel="stylesheet"><meta name="theme-color" content=""><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script src="/toggle-theme.js"></script><style>.breadcrumb:where(.astro-ilhxcym7){width:100%;max-width:80rem;margin:2rem auto .25rem;padding-left:1rem;padding-right:1rem}.breadcrumb:where(.astro-ilhxcym7) ul:where(.astro-ilhxcym7){-moz-column-gap:.5rem;column-gap:.5rem;display:flex}.breadcrumb:where(.astro-ilhxcym7) ul:where(.astro-ilhxcym7) li:where(.astro-ilhxcym7){-moz-column-gap:.5rem;text-transform:capitalize;opacity:.7;column-gap:.5rem;display:flex}.breadcrumb:where(.astro-ilhxcym7) ul:where(.astro-ilhxcym7) li:where(.astro-ilhxcym7):not(:last-child):hover{opacity:1}#main-content:where(.astro-hsp6otuf){width:100%;max-width:80rem;margin-left:auto;margin-right:auto;padding-bottom:1rem;padding-left:1rem;padding-right:1rem}#main-content:where(.astro-hsp6otuf) h1:where(.astro-hsp6otuf){font-size:1.5rem;font-weight:600;line-height:2rem}@media (min-width:640px){#main-content:where(.astro-hsp6otuf) h1:where(.astro-hsp6otuf){font-size:1.875rem;line-height:2.25rem}}#main-content:where(.astro-hsp6otuf) p:where(.astro-hsp6otuf){margin-top:.5rem;margin-bottom:1.5rem;font-style:italic}</style>
-<link rel="stylesheet" href="/_astro/about.aXFmXLlA.css">
+<!DOCTYPE html><html lang="en" class="scroll-smooth"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="canonical" href="https://tim-watson.com/posts/migrating-my-blog-to-a-static-astro-site/"><meta name="generator" content="Astro v4.2.4"><!-- General Meta Tags --><title>Migrating my Wordpress blog to Astro</title><meta name="title" content="Migrating my Wordpress blog to Astro"><meta name="description" content="Migrating my blog to Astro"><meta name="author" content="Tim Watson"><link rel="sitemap" href="/sitemap-index.xml"><!-- Open Graph / Facebook --><meta property="og:title" content="Migrating my Wordpress blog to Astro"><meta property="og:description" content="Migrating my blog to Astro"><meta property="og:url" content="https://tim-watson.com/posts/migrating-my-blog-to-a-static-astro-site/"><meta property="og:image" content="https://tim-watson.com/"><!-- Article Published/Modified time --><meta property="article:published_time" content="2023-07-13T20:00:35.000Z"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tim-watson.com/posts/migrating-my-blog-to-a-static-astro-site/"><meta property="twitter:title" content="Migrating my Wordpress blog to Astro"><meta property="twitter:description" content="Migrating my blog to Astro"><meta property="twitter:image" content="https://tim-watson.com/"><!-- Google Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet"><meta name="theme-color" content=""><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script src="/toggle-theme.js"></script><style>.breadcrumb:where(.astro-ilhxcym7){margin-left:auto;margin-right:auto;margin-bottom:.25rem;margin-top:2rem;width:100%;max-width:80rem;padding-left:1rem;padding-right:1rem}.breadcrumb:where(.astro-ilhxcym7) ul:where(.astro-ilhxcym7){display:flex;-moz-column-gap:.5rem;column-gap:.5rem}.breadcrumb:where(.astro-ilhxcym7) ul:where(.astro-ilhxcym7) li:where(.astro-ilhxcym7){display:flex;-moz-column-gap:.5rem;column-gap:.5rem;text-transform:capitalize;opacity:.7}.breadcrumb:where(.astro-ilhxcym7) ul:where(.astro-ilhxcym7) li:where(.astro-ilhxcym7):not(:last-child):hover{opacity:1}
+#main-content:where(.astro-hsp6otuf){margin-left:auto;margin-right:auto;width:100%;max-width:80rem;padding-left:1rem;padding-right:1rem;padding-bottom:1rem}#main-content:where(.astro-hsp6otuf) h1:where(.astro-hsp6otuf){font-size:1.5rem;line-height:2rem;font-weight:600}@media (min-width: 640px){#main-content:where(.astro-hsp6otuf) h1:where(.astro-hsp6otuf){font-size:1.875rem;line-height:2.25rem}}#main-content:where(.astro-hsp6otuf) p:where(.astro-hsp6otuf){margin-bottom:1.5rem;margin-top:.5rem;font-style:italic}
+</style>
+<link rel="stylesheet" href="/_astro/about.aXFmXLlA.css" />
 <style>a:where(.astro-blwjyjpt){position:relative;text-decoration-line:underline;text-decoration-style:dashed}a:where(.astro-blwjyjpt):hover{top:-.125rem;--tw-text-opacity: 1;color:rgba(var(--color-accent),var(--tw-text-opacity))}a:where(.astro-blwjyjpt):focus-visible{padding:.25rem}a:where(.astro-blwjyjpt) svg:where(.astro-blwjyjpt){margin-right:-1rem;height:1.25rem;width:1.25rem;--tw-scale-x: .75;--tw-scale-y: .75;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));--tw-text-opacity: 1;color:rgba(var(--color-text-base),var(--tw-text-opacity));opacity:.7}.group:where(.astro-blwjyjpt):hover a:where(.astro-blwjyjpt) svg:where(.astro-blwjyjpt){fill:rgb(var(--color-accent))}
 .pagination-wrapper:where(.astro-d776pwuy){margin-bottom:2rem;margin-top:auto;display:flex;justify-content:center}.disabled:where(.astro-d776pwuy){pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none;opacity:.5}.disabled:where(.astro-d776pwuy):hover{--tw-text-opacity: 1;color:rgba(var(--color-text-base),var(--tw-text-opacity))}.group:where(.astro-d776pwuy):hover .disabled:where(.astro-d776pwuy){fill:rgb(var(--color-text-base))}.group:where(.astro-d776pwuy):hover .disabled-svg:where(.astro-d776pwuy){fill:rgb(var(--color-text-base))!important}
 @keyframes astroFadeInOut{0%{opacity:1}to{opacity:0}}@keyframes astroFadeIn{0%{opacity:0}}@keyframes astroFadeOut{to{opacity:0}}@keyframes astroSlideFromRight{0%{transform:translate(100%)}}@keyframes astroSlideFromLeft{0%{transform:translate(-100%)}}@keyframes astroSlideToRight{to{transform:translate(100%)}}@keyframes astroSlideToLeft{to{transform:translate(-100%)}}@media (prefers-reduced-motion){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}[data-astro-transition-scope]{animation:none!important}}
 main:where(.astro-vj4tpspi){margin-left:auto;margin-right:auto;width:100%;max-width:80rem;padding-left:1rem;padding-right:1rem;padding-bottom:3rem}.post-title:where(.astro-vj4tpspi){font-size:1.5rem;line-height:2rem;font-weight:600;--tw-text-opacity: 1;color:rgba(var(--color-accent),var(--tw-text-opacity))}
-</style><script type="module" src="/_astro/hoisted.o4LUDjyO.js"></script><style>[data-astro-transition-scope=astro-plk3gbjq-1]{view-transition-name:migrating-my-wordpress-blog-to-astro}@layer astro{::view-transition-old(migrating-my-wordpress-blog-to-astro){animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}::view-transition-new(migrating-my-wordpress-blog-to-astro){animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back]::view-transition-old(migrating-my-wordpress-blog-to-astro){animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back]::view-transition-new(migrating-my-wordpress-blog-to-astro){animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}}[data-astro-transition-fallback=old] [data-astro-transition-scope=astro-plk3gbjq-1],[data-astro-transition-fallback=old][data-astro-transition-scope=astro-plk3gbjq-1]{animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition-fallback=new] [data-astro-transition-scope=astro-plk3gbjq-1],[data-astro-transition-fallback=new][data-astro-transition-scope=astro-plk3gbjq-1]{animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back][data-astro-transition-fallback=old] [data-astro-transition-scope=astro-plk3gbjq-1],[data-astro-transition=back][data-astro-transition-fallback=old][data-astro-transition-scope=astro-plk3gbjq-1]{animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back][data-astro-transition-fallback=new] [data-astro-transition-scope=astro-plk3gbjq-1],[data-astro-transition=back][data-astro-transition-fallback=new][data-astro-transition-scope=astro-plk3gbjq-1]{animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}</style><style>[data-astro-transition-scope=astro-36ssibgs-2]{view-transition-name:astro}@layer astro{::view-transition-old(astro){animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}::view-transition-new(astro){animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back]::view-transition-old(astro){animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back]::view-transition-new(astro){animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}}[data-astro-transition-fallback=old] [data-astro-transition-scope=astro-36ssibgs-2],[data-astro-transition-fallback=old][data-astro-transition-scope=astro-36ssibgs-2]{animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition-fallback=new] [data-astro-transition-scope=astro-36ssibgs-2],[data-astro-transition-fallback=new][data-astro-transition-scope=astro-36ssibgs-2]{animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back][data-astro-transition-fallback=old] [data-astro-transition-scope=astro-36ssibgs-2],[data-astro-transition=back][data-astro-transition-fallback=old][data-astro-transition-scope=astro-36ssibgs-2]{animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back][data-astro-transition-fallback=new] [data-astro-transition-scope=astro-36ssibgs-2],[data-astro-transition=back][data-astro-transition-fallback=new][data-astro-transition-scope=astro-36ssibgs-2]{animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}</style><style>[data-astro-transition-scope=astro-36ssibgs-3]{view-transition-name:static-web-hosting}@layer astro{::view-transition-old(static-web-hosting){animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}::view-transition-new(static-web-hosting){animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back]::view-transition-old(static-web-hosting){animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back]::view-transition-new(static-web-hosting){animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}}[data-astro-transition-fallback=old] [data-astro-transition-scope=astro-36ssibgs-3],[data-astro-transition-fallback=old][data-astro-transition-scope=astro-36ssibgs-3]{animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition-fallback=new] [data-astro-transition-scope=astro-36ssibgs-3],[data-astro-transition-fallback=new][data-astro-transition-scope=astro-36ssibgs-3]{animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back][data-astro-transition-fallback=old] [data-astro-transition-scope=astro-36ssibgs-3],[data-astro-transition=back][data-astro-transition-fallback=old][data-astro-transition-scope=astro-36ssibgs-3]{animation-name:astroFadeOut;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}[data-astro-transition=back][data-astro-transition-fallback=new] [data-astro-transition-scope=astro-36ssibgs-3],[data-astro-transition=back][data-astro-transition-fallback=new][data-astro-transition-scope=astro-36ssibgs-3]{animation-name:astroFadeIn;animation-duration:.18s;animation-timing-function:cubic-bezier(.76,0,.24,1);animation-fill-mode:both}</style></head> <body>  <header class="astro-3ef6ksr2"> <a id="skip-to-content" href="#main-content" class="astro-3ef6ksr2">Skip to content</a> <div class="astro-3ef6ksr2 nav-container"> <div class="astro-3ef6ksr2 top-nav-wrap"> <a href="/" class="astro-3ef6ksr2 logo whitespace-nowrap"> Tim Watson's Blog </a> <nav id="nav-menu" class="astro-3ef6ksr2"> <button class="astro-3ef6ksr2 focus-outline hamburger-menu" aria-label="Open Menu" aria-expanded="false" aria-controls="menu-items"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="astro-3ef6ksr2 menu-icon"> <line x1="7" y1="12" x2="21" y2="12" class="line astro-3ef6ksr2"></line> <line x1="3" y1="6" x2="21" y2="6" class="line astro-3ef6ksr2"></line> <line x1="12" y1="18" x2="21" y2="18" class="line astro-3ef6ksr2"></line> <line x1="18" y1="6" x2="6" y2="18" class="astro-3ef6ksr2 close"></line> <line x1="6" y1="6" x2="18" y2="18" class="astro-3ef6ksr2 close"></line> </svg> </button> <ul id="menu-items" class="astro-3ef6ksr2 display-none sm:flex"> <li class="astro-3ef6ksr2"> <a href="/about" class="astro-3ef6ksr2">
+</style><script type="module" src="/_astro/hoisted.o4LUDjyO.js"></script><style>[data-astro-transition-scope="astro-plk3gbjq-1"] { view-transition-name: migrating-my-wordpress-blog-to-astro; }@layer astro { ::view-transition-old(migrating-my-wordpress-blog-to-astro) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(migrating-my-wordpress-blog-to-astro) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(migrating-my-wordpress-blog-to-astro) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(migrating-my-wordpress-blog-to-astro) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-plk3gbjq-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-plk3gbjq-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-plk3gbjq-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-plk3gbjq-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-plk3gbjq-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-plk3gbjq-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-plk3gbjq-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-plk3gbjq-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style><style>[data-astro-transition-scope="astro-36ssibgs-2"] { view-transition-name: astro; }@layer astro { ::view-transition-old(astro) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(astro) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(astro) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(astro) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-2"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-2"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-2"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-2"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-2"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-2"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-2"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-2"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style><style>[data-astro-transition-scope="astro-36ssibgs-3"] { view-transition-name: static-web-hosting; }@layer astro { ::view-transition-old(static-web-hosting) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(static-web-hosting) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(static-web-hosting) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(static-web-hosting) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-3"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-3"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-3"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-3"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-3"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-3"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-3"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-3"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body>  <header class="astro-3ef6ksr2"> <a id="skip-to-content" href="#main-content" class="astro-3ef6ksr2">Skip to content</a> <div class="nav-container astro-3ef6ksr2"> <div class="top-nav-wrap astro-3ef6ksr2"> <a href="/" class="logo whitespace-nowrap astro-3ef6ksr2"> Tim Watson&#39;s Blog </a> <nav id="nav-menu" class="astro-3ef6ksr2"> <button class="hamburger-menu focus-outline astro-3ef6ksr2" aria-label="Open Menu" aria-expanded="false" aria-controls="menu-items"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="menu-icon astro-3ef6ksr2"> <line x1="7" y1="12" x2="21" y2="12" class="line astro-3ef6ksr2"></line> <line x1="3" y1="6" x2="21" y2="6" class="line astro-3ef6ksr2"></line> <line x1="12" y1="18" x2="21" y2="18" class="line astro-3ef6ksr2"></line> <line x1="18" y1="6" x2="6" y2="18" class="close astro-3ef6ksr2"></line> <line x1="6" y1="6" x2="18" y2="18" class="close astro-3ef6ksr2"></line> </svg> </button> <ul id="menu-items" class="display-none sm:flex astro-3ef6ksr2"> <li class="astro-3ef6ksr2"> <a href="/about" class=" astro-3ef6ksr2">
 About
-</a> </li> <li class="astro-3ef6ksr2"> <a href="/posts" class="astro-3ef6ksr2">
+</a> </li> <li class="astro-3ef6ksr2"> <a href="/posts" class=" astro-3ef6ksr2">
 Posts
-</a> </li> <li class="astro-3ef6ksr2"> <a href="/tags" class="astro-3ef6ksr2">
+</a> </li> <li class="astro-3ef6ksr2"> <a href="/tags" class=" astro-3ef6ksr2">
 Tags
-</a> </li> <li class="astro-3ef6ksr2"> <a href="/search" class="astro-3ef6ksr2 focus-outline flex group hover:text-skin-accent inline-block p-3 sm:p-1" aria-label="search" title="Search"> <svg xmlns="http://www.w3.org/2000/svg" class="astro-3ef6ksr2 scale-125 sm:scale-100"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3ef6ksr2"></path> </svg> <span class="astro-3ef6ksr2 sr-only">Search</span> </a> </li> <li class="astro-3ef6ksr2"> <button id="theme-btn" class="astro-3ef6ksr2 focus-outline" title="Toggles light &amp; dark" aria-label="auto" aria-live="polite"> <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-3ef6ksr2"> <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3ef6ksr2"></path> </svg> <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-3ef6ksr2"> <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3ef6ksr2"></path> </svg> </button> </li> </ul> </nav> </div> </div> <div class="max-w-7xl mx-auto px-4"> <hr class="border-skin-line" aria-hidden="true"> </div> </header>   <div class="astro-vj4tpspi flex justify-start max-w-7xl mx-auto px-2 w-full"> <button class="astro-vj4tpspi flex focus-outline hover:opacity-75 mb-2 mt-8" onclick='history.length===1?window.location="/":history.back();
-'> <svg xmlns="http://www.w3.org/2000/svg" class="astro-vj4tpspi"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-vj4tpspi"></path> </svg><span class="astro-vj4tpspi">Go back</span> </button> </div> <main id="main-content" class="astro-vj4tpspi"> <h1 class="astro-vj4tpspi post-title" data-astro-transition-scope="astro-plk3gbjq-1">Migrating my Wordpress blog to Astro</h1> <div class="astro-vj4tpspi flex items-center my-2 opacity-80 space-x-2"><svg xmlns="http://www.w3.org/2000/svg" class="inline-block fill-skin-base h-6 min-w-[1.375rem] scale-100 w-6" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Published:</span><span class="italic text-base"><time datetime="2023-07-13T20:00:35.000Z">Jul 13, 2023</time><span aria-hidden="true"> | </span><span class="sr-only">&nbsp;at&nbsp;</span><span class="text-nowrap">09:00 PM</span></span></div> <article id="article" role="article" class="astro-vj4tpspi max-w-7xl mx-auto mt-8 prose"> <h2 id="table-of-contents">Table of contents</h2>
+</a> </li> <li class="astro-3ef6ksr2"> <a href="/search" class="group inline-block hover:text-skin-accent focus-outline p-3 sm:p-1 flex astro-3ef6ksr2" aria-label="search" title="Search"> <svg xmlns="http://www.w3.org/2000/svg" class="scale-125 sm:scale-100 astro-3ef6ksr2"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3ef6ksr2"></path> </svg> <span class="sr-only astro-3ef6ksr2">Search</span> </a> </li> <li class="astro-3ef6ksr2"> <button id="theme-btn" class="focus-outline astro-3ef6ksr2" title="Toggles light & dark" aria-label="auto" aria-live="polite"> <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-3ef6ksr2"> <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3ef6ksr2"></path> </svg> <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-3ef6ksr2"> <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3ef6ksr2"></path> </svg> </button> </li> </ul> </nav> </div> </div> <div class="max-w-7xl mx-auto px-4"> <hr class="border-skin-line" aria-hidden="true"> </div> </header>   <div class="mx-auto flex w-full max-w-7xl justify-start px-2 astro-vj4tpspi"> <button class="focus-outline mb-2 mt-8 flex hover:opacity-75 astro-vj4tpspi" onclick="(() => (history.length === 1) ? window.location = '/' : history.back())()"> <svg xmlns="http://www.w3.org/2000/svg" class="astro-vj4tpspi"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-vj4tpspi"></path> </svg><span class="astro-vj4tpspi">Go back</span> </button> </div> <main id="main-content" class="astro-vj4tpspi"> <h1 class="post-title astro-vj4tpspi" data-astro-transition-scope="astro-plk3gbjq-1">Migrating my Wordpress blog to Astro</h1> <div class="flex items-center space-x-2 opacity-80 my-2 astro-vj4tpspi"><svg xmlns="http://www.w3.org/2000/svg" class="scale-100 inline-block h-6 w-6 min-w-[1.375rem] fill-skin-base" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Published:</span><span class="italic text-base"><time dateTime="2023-07-13T20:00:35.000Z">Jul 13, 2023</time><span aria-hidden="true"> | </span><span class="sr-only"> at </span><span class="text-nowrap">09:00 PM</span></span></div> <article id="article" role="article" class="prose mx-auto mt-8 max-w-7xl astro-vj4tpspi"> <h2 id="table-of-contents">Table of contents</h2>
 <p></p><details><summary>Open Table of contents</summary><p></p>
 <ul>
 <li><a href="#the-wordpress-blog">The Wordpress Blog</a></li>
@@ -33,22 +142,22 @@ Tags
 <p>So it became an <strong><em>at some point</em></strong> I will update my site.</p>
 <h2 id="selecting-a-new-web-framework">Selecting a New Web Framework</h2>
 <p>Intermittently, I would watch videos from people on YouTube such as <a href="https://www.youtube.com/@Fireship">Fireship</a>, often focusing on web frameworks. Around the time I was looking for an alternative to Wordpress, <a href="https://astro.build/">Astro</a> released a new version and it caught my attention as it seemed to be pretty close to what I was looking for.</p>
-<p><a href="https://youtu.be/gxBkghlglTg"><img src="https://img.youtube.com/vi/gxBkghlglTg/maxresdefault.jpg" width="30%" alt="" fetchpriority="high" decoding="async"></a></p>
-<p>It is statically generated, posts are in <code>Markdown</code> and I can generally use templates to do most of the heavy lifting with respect to styling. In fact, long before I actually modified my website, I played around and coded through this <a href="https://www.youtube.com/watch?v=Oi9z5gfIHJs&amp;t">Crash Course</a>. With Astro it seemed really easy to get pretty much everything I wanted and more importantly adding posts is easy, too. So what would stop me from actually blogging ?</p>
+<p><a href="https://youtu.be/gxBkghlglTg"><img src="https://img.youtube.com/vi/gxBkghlglTg/maxresdefault.jpg" width="30%"></a></p>
+<p>It is statically generated, posts are in <code>Markdown</code> and I can generally use templates to do most of the heavy lifting with respect to styling. In fact, long before I actually modified my website, I played around and coded through this <a href="https://www.youtube.com/watch?v=Oi9z5gfIHJs&#x26;t">Crash Course</a>. With Astro it seemed really easy to get pretty much everything I wanted and more importantly adding posts is easy, too. So what would stop me from actually blogging ?</p>
 <h2 id="hostinger">Hostinger</h2>
 <p>After playing with the framework, I didn’t really know what else I <strong>COULD</strong> do. I assumed that with my current hosting plan I would need an (additional) VPS and would have to configure the server and CNAME related settings myself and because I would effectively be paying to host a second server, it fell down my priority list of things to do. In fact, it even further removed any motivation to blog. Ultimately, it was someone at work who came across my website and asked me about it which caused me to look back into updating my blog. I decided why shouldn’t I just play with a VPS even if I don’t migrate my domain, because that’s too much hassle…</p>
 <p>I started by trying to replicate what I saw in this <a href="https://www.youtube.com/watch?v=kMtVBvO87pg">video</a> - buying a small VPS from Hostinger, trying to mimic the folder structure and pointing the relevant records to where they needed to go. It didn’t work, or I didn’t follow the instructions as I needed to… In the end, this was a blessing in disguise but I couldn’t get over the fact that it <strong>SHOULD</strong> be easier than this to host an Astro site. So by digging in a little bit further, I realised I didn’t need a second VPS, could refund the redundant one I had bought and host it actually very easily with my original hosting plan.</p>
 <h3 id="hosting-a-static-webpage-on-hostinger">Hosting a Static Webpage on Hostinger</h3>
 <p>After some more directed googling (and some unhelpful Hostinger blog posts), I came across this <a href="https://www.youtube.com/watch?v=VL92LgoHmos">video</a>. When I noticed that the uploaded site wasn’t Wordpress, I connected the dots that the upload tool/file browser can be used for <strong>ANY</strong> static site files as long as they go into the correct folder. See below, this process basically entails deleting my Wordpress site out of the <code>public_html</code> folder and then uploading the content from my Astro build folder.</p>
-<img src="/images/migrating/hostinger_file_browser.png.webp" alt="Hostinger File Browser" title="Hostinger File Browser" width="300" loading="lazy" decoding="async" height="327">
+<img src="/images/migrating/hostinger_file_browser.png" alt="Hostinger File Browser" title="Hostinger File Browser" width="300">
 <h3 id="automating-updating-the-webpage-on-hostinger">Automating Updating the Webpage on Hostinger</h3>
 <p>Of course it’s not great to log into Hostinger, delete the currently hosted pages and then re-upload a zip. Instead there was another tab that caught my eye, <code>Git</code>:
-<img src="/images/migrating/hostinger_git.png.webp" alt="Hostinger Advanced Options" title="Hostinger Advanced Options" width="150" loading="lazy" decoding="async" height="184"></p>
+<img src="/images/migrating/hostinger_git.png" alt="Hostinger Advanced Options" title="Hostinger Advanced Options" width="150"></p>
 <p>I knew that other ways of hosting Astro websites hook into Git services. When a designated branch is updated, it builds and publishes the new site to a publically accessible location. <a href="https://pages.github.com/">Github pages</a> is one way to do this. However, we can hook into a repository and then update our Hostinger filebrowser in much the same way. Again, there is a great <a href="https://www.youtube.com/watch?v=UCNGbAUnbgg">video</a> that gets you most of the way - this basically requires setting up and adding a key to your Github project, then adding a webhook link which can be generated from the UI/<code>Auto Deployment</code> button.</p>
-<img src="/images/migrating/hostinger_auto_deploy.png.webp" alt="Hostinger Github Hook" title="Hostinger Github Hook" width="700" loading="lazy" decoding="async" height="194">
-<img src="/images/migrating/github_webhooks.png.webp" alt="Github Webooks Settings" title="Github Webooks Settings" width="700" loading="lazy" decoding="async" height="268">
+<img src="/images/migrating/hostinger_auto_deploy.png" alt="Hostinger Github Hook" title="Hostinger Github Hook" width="700">
+<img src="/images/migrating/github_webhooks.png" alt="Github Webooks Settings" title="Github Webooks Settings" width="700">
 <p>Therefore, the final challenge is uploading <strong>just</strong> the <code>dist</code> folder contents to Github, as these are the files required to be moved/deployed. Having looked into different Git strategies with regards to having one repository inside another, nesting repositories seemed a bit to involved for what I needed. Instead, I opted for an external build folder that would have its own separate Git repository which I could remotely push to Github.</p>
-<pre class="astro-code one-dark-pro" style="color:#abb2bf;white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#61AFEF">├───blog</span></span>
+<pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0"><code><span class="line"><span style="color:#61AFEF">├───blog</span></span>
 <span class="line"><span style="color:#61AFEF">│</span><span style="color:#98C379">   └───tim-watson</span></span>
 <span class="line"><span style="color:#61AFEF">│</span><span style="color:#98C379">       ├───.astro</span></span>
 <span class="line"><span style="color:#61AFEF">│</span><span style="color:#98C379">       ├───.husky</span></span>
@@ -73,11 +182,11 @@ Tags
 <span class="line"><span style="color:#61AFEF">│</span><span style="color:#98C379">   ├───tim-watson-dist</span></span>
 <span class="line"><span style="color:#61AFEF">│</span><span style="color:#98C379">   └───_astro</span></span></code></pre>
 <p>My project structure is illustrated above - <code>blog</code> and <code>blog_dist</code>. Inside <code>blog</code> are my project files for the website <code>tim-watson</code>. You may notice that inside <code>blog</code> there is also a <code>dist</code> folder. My solution to creating an outer build folder was to modify the <code>package.json</code> build command and copy the files, but not remove the <code>dist</code> folder.</p>
-<pre class="astro-code one-dark-pro" style="color:#abb2bf;white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#98C379">"start"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"astro dev"</span><span style="color:#ABB2BF">,</span></span>
-<span class="line"><span style="color:#98C379">"build"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"astro build &amp;&amp; robocopy .</span><span style="color:#56B6C2">\\</span><span style="color:#98C379">dist</span><span style="color:#56B6C2">\\</span><span style="color:#98C379"> ..</span><span style="color:#56B6C2">\\</span><span style="color:#98C379">..</span><span style="color:#56B6C2">\\</span><span style="color:#98C379">blog_dist /E"</span><span style="color:#ABB2BF">,</span></span>
+<pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0"><code><span class="line"><span style="color:#98C379">"start"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"astro dev"</span><span style="color:#ABB2BF">,</span></span>
+<span class="line"><span style="color:#98C379">"build"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"astro build &#x26;&#x26; robocopy .</span><span style="color:#56B6C2">\\</span><span style="color:#98C379">dist</span><span style="color:#56B6C2">\\</span><span style="color:#98C379"> ..</span><span style="color:#56B6C2">\\</span><span style="color:#98C379">..</span><span style="color:#56B6C2">\\</span><span style="color:#98C379">blog_dist /E"</span><span style="color:#ABB2BF">,</span></span>
 <span class="line"><span style="color:#98C379">"preview"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"astro preview"</span><span style="color:#ABB2BF">,</span></span></code></pre>
 <p>The build command took a bit of tinkering to get exactly right. First, we build our website into the local <code>dist</code> folder inside the main project. We then need to recursively copy everything to our outer folder (<code>blog_dist</code>) which we can then push to Github. Unlike with Linux (<code>cp</code>), this seemed to be far more finicky on Windows but fortunately we can use <code>ROBOCOPY</code> with an <code>\E</code> argument to both copy but also leave the contents in the main project folder.</p>
-<pre class="astro-code one-dark-pro" style="color:#abb2bf;white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#56B6C2">-------------------------------------------------------------------------------</span></span>
+<pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0"><code><span class="line"><span style="color:#56B6C2">-------------------------------------------------------------------------------</span></span>
 <span class="line"><span style="color:#ABB2BF">   ROBOCOPY     ::     Robust File Copy </span><span style="color:#C678DD">for</span><span style="color:#ABB2BF"> Windows</span></span>
 <span class="line"><span style="color:#56B6C2">-------------------------------------------------------------------------------</span></span>
 <span class="line"></span>
@@ -99,15 +208,15 @@ Tags
 <p>This section is slightly out of order to how I created my Astro webpage. I had already created my blog, before I uploaded it to Hostinger. However, for those interested in the styling and the customisations to the template I chose, I will list a few. But I am by no means a front-end developer and I definitely don’t enjoy it!</p>
 <p>On the Astro website there is a showcase page for themes to get your site <a href="https://astro.build/themes">started</a>. I scrolled around until I settled on trying <a href="https://github.com/satnaing/astro-paper">Astro Paper</a> (or <a href="https://astro.build/themes/details/astro-paper/">here</a> on the showcase page). This theme had pretty much everything I was looking for: simplicity, blog posts, built in light/dark mode with styling and fonts that I quite liked.</p>
 <p>My main modifications to this theme where widening the main column in the centre (and then matching the header and footer to these size changes). For example, this snippet from <code>PostDetails.astro</code> widens the size of the post size, specifically the <code>max-w-#xl</code>.</p>
-<pre class="astro-code one-dark-pro" style="color:#abb2bf;white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&lt;</span><span style="color:#E06C75">style</span><span style="color:#ABB2BF"> &gt;</span><span style="color:#E06C75"> main</span><span style="color:#ABB2BF"> {</span></span>
+<pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">style</span><span style="color:#ABB2BF"> ></span><span style="color:#E06C75"> main</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#ABB2BF">  @apply mx-auto w-full max-w-7xl px-4 pb-12;</span></span>
 <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre>
 <p>This pattern is repeated throughout the header file (<code>Header.astro</code>). Below is an example for the navigation bar:</p>
-<pre class="astro-code one-dark-pro" style="color:#abb2bf;white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#D19A66">.nav-container</span><span style="color:#ABB2BF"> {</span></span>
+<pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0"><code><span class="line"><span style="color:#D19A66">.nav-container</span><span style="color:#ABB2BF"> {</span></span>
 <span class="line"><span style="color:#ABB2BF">  @apply mx-auto flex max-w-7xl flex-col items-center justify-between sm:flex-row;</span></span>
 <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre>
 <p>The line underneath the nav bar is an imported prop from <code>Hr.astro</code>. This prop object has been resized to fit with the other modifications.</p>
-<pre class="astro-code one-dark-pro" style="color:#abb2bf;white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">---</span></span>
+<pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">---</span></span>
 <span class="line"><span style="color:#ABB2BF">export interface Props {</span></span>
 <span class="line"><span style="color:#ABB2BF">  noPadding?: boolean;</span></span>
 <span class="line"><span style="color:#ABB2BF">  ariaHidden?: boolean;</span></span>
@@ -116,45 +225,45 @@ Tags
 <span class="line"><span style="color:#ABB2BF">const { noPadding = false, ariaHidden = true } = Astro.props;</span></span>
 <span class="line"><span style="color:#ABB2BF">---</span></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&lt;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">{</span><span style="color:#D19A66">`max-w-7xl</span><span style="color:#D19A66"> mx-auto</span><span style="color:#D19A66"> ${noPadding</span><span style="color:#D19A66"> ?</span><span style="color:#fff"> "px-0"</span><span style="color:#D19A66"> :</span><span style="color:#fff"> "px-4"}`}</span><span style="color:#ABB2BF">&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">  &lt;</span><span style="color:#E06C75">hr</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"border-skin-line"</span><span style="color:#D19A66"> aria-hidden</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">{ariaHidden}</span><span style="color:#ABB2BF"> /&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">&lt;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">&gt;</span></span></code></pre>
+<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">div</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">{</span><span style="color:#D19A66">`max-w-7xl</span><span style="color:#D19A66"> mx-auto</span><span style="color:#D19A66"> ${noPadding</span><span style="color:#D19A66"> ?</span><span style="color:#FFFFFF"> "px-0"</span><span style="color:#D19A66"> :</span><span style="color:#FFFFFF"> "px-4"}`}</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">hr</span><span style="color:#D19A66"> class</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"border-skin-line"</span><span style="color:#D19A66"> aria-hidden</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">{ariaHidden}</span><span style="color:#ABB2BF"> /></span></span>
+<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">div</span><span style="color:#ABB2BF">></span></span></code></pre>
 <p>Most of these changes were quite fiddly like finding which elements affect different parts of the blog and give it the ability to expand, as well as re-ordering the header, changing the number of posts or changing the name of the site and aligning this correctly.</p>
 <p>The other final challenge was migrating my previous two pages from Wordpress to <code>Markdown</code>. For the most part this was pretty easy and quite painless, which was the entire point of choosing a static webpage that uses <code>Markdown</code>. However, images proved to be quite challenging, especially lining them up correctly and more specifically getting the three images in my <a href="https://tim-watson.com/about/">about</a> page to display inline with captions. Eventually, I found the cleanest way (I hope) below:</p>
-<pre class="astro-code one-dark-pro" style="color:#abb2bf;white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&lt;</span><span style="color:#E06C75">figure</span><span style="color:#D19A66"> style</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"width:32%"</span><span style="color:#ABB2BF">&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">  &lt;</span><span style="color:#E06C75">img</span></span>
+<pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">figure</span><span style="color:#D19A66"> style</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"width:32%"</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">img</span></span>
 <span class="line"><span style="color:#D19A66">    src</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"/images/about/480k_6spheres_Z-min.png"</span></span>
 <span class="line"><span style="color:#D19A66">    alt</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"Floating Spheres Scene"</span></span>
 <span class="line"><span style="color:#D19A66">    title</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"Floating Spheres Scene"</span></span>
-<span class="line"><span style="color:#ABB2BF">  /&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">  &lt;</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF">  /></span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#ABB2BF">    Floating Spheres Scene</span></span>
-<span class="line"><span style="color:#ABB2BF">  &lt;/</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">&lt;/</span><span style="color:#E06C75">figure</span><span style="color:#ABB2BF">  &gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">&lt;</span><span style="color:#E06C75">figure</span><span style="color:#D19A66"> style</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"width:32%"</span><span style="color:#ABB2BF">&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">  &lt;</span><span style="color:#E06C75">img</span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;/</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">figure</span><span style="color:#ABB2BF">  ></span></span>
+<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">figure</span><span style="color:#D19A66"> style</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"width:32%"</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">img</span></span>
 <span class="line"><span style="color:#D19A66">    src</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"/images/about/480k_400sp_20L-min.png"</span></span>
 <span class="line"><span style="color:#D19A66">    alt</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"Cornell Scene"</span></span>
 <span class="line"><span style="color:#D19A66">    title</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"Cornell Scene"</span></span>
-<span class="line"><span style="color:#ABB2BF">  /&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">  &lt;</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF">  /></span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#ABB2BF">    Cornell Scene</span></span>
-<span class="line"><span style="color:#ABB2BF">  &lt;/</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">&lt;/</span><span style="color:#E06C75">figure</span><span style="color:#ABB2BF">&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">&lt;</span><span style="color:#E06C75">figure</span><span style="color:#D19A66">  style</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"width:32%"</span><span style="color:#ABB2BF">&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">  &lt;</span><span style="color:#E06C75">img</span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;/</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">figure</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">figure</span><span style="color:#D19A66">  style</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"width:32%"</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">img</span></span>
 <span class="line"><span style="color:#D19A66">    src</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"/images/about/480-0000000240-min.png"</span></span>
 <span class="line"><span style="color:#D19A66">    alt</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"Mandelbrot Scene"</span></span>
 <span class="line"><span style="color:#D19A66">    title</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"Mandelbrot Scene"</span></span>
-<span class="line"><span style="color:#ABB2BF">  /&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">  &lt;</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF">  /></span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">></span></span>
 <span class="line"><span style="color:#ABB2BF">    Mandelbrot Scene</span></span>
-<span class="line"><span style="color:#ABB2BF">  &lt;/</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">&gt;</span></span>
-<span class="line"><span style="color:#ABB2BF">&lt;/</span><span style="color:#E06C75">figure</span><span style="color:#ABB2BF">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF">  &#x3C;/</span><span style="color:#E06C75">figcaption</span><span style="color:#ABB2BF">></span></span>
+<span class="line"><span style="color:#ABB2BF">&#x3C;/</span><span style="color:#E06C75">figure</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
 <span class="line"></span>
 <span class="line"></span>
-<span class="line"><span style="color:#ABB2BF">&lt;</span><span style="color:#E06C75">style</span><span style="color:#ABB2BF">&gt;</span></span>
+<span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">style</span><span style="color:#ABB2BF">></span></span>
 <span class="line"></span>
 <span class="line"></span>
 <span class="line"><span style="color:#E06C75">figure</span><span style="color:#ABB2BF">,</span><span style="color:#E06C75"> figcaption</span><span style="color:#ABB2BF"> {</span></span>
@@ -163,8 +272,8 @@ Tags
 <span class="line"><span style="color:#ABB2BF">  text-align:</span><span style="color:#D19A66">center</span><span style="color:#ABB2BF">;</span></span>
 <span class="line"><span style="color:#ABB2BF">}</span></span></code></pre>
 <p>But I did go through several iterations. On the page you can still see old versions commented out, see below:</p>
-<pre class="astro-code one-dark-pro" style="color:#abb2bf;white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">&lt;!-- for some reason the images dont display equally so i hack the width of them ... unsure why this is :( </span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">&lt;img src="../src/images/about/480k_6spheres_Z-min.png" alt="Floating Spheres Scene" title="Floating Spheres Scene" width="97%"&gt;  |  &lt;img src="../src/images/about/480k_400sp_20L-min.png" alt="Cornell Scene" title="Cornell Scene" &gt; |&lt;img src="../src/images/about/480-0000000240-min.png" alt="Mandelbrot Scene" title="Mandelbrot Scene" width="94%"&gt;</span></span>
+<pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0"><code><span class="line"><span style="color:#7F848E;font-style:italic">&#x3C;!-- for some reason the images dont display equally so i hack the width of them ... unsure why this is :( </span></span>
+<span class="line"><span style="color:#7F848E;font-style:italic">&#x3C;img src="../src/images/about/480k_6spheres_Z-min.png" alt="Floating Spheres Scene" title="Floating Spheres Scene" width="97%">  |  &#x3C;img src="../src/images/about/480k_400sp_20L-min.png" alt="Cornell Scene" title="Cornell Scene" > |&#x3C;img src="../src/images/about/480-0000000240-min.png" alt="Mandelbrot Scene" title="Mandelbrot Scene" width="94%"></span></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">:-------------------------:|:-------------------------:|:-------------------------:</span></span>
 <span class="line"><span style="color:#7F848E;font-style:italic"> Floating Spheres Scene |  Cornell Scene | Mandelbrot Scene</span></span>
 <span class="line"></span>
@@ -174,47 +283,145 @@ Tags
 <span class="line"><span style="color:#7F848E;font-style:italic">}</span></span>
 <span class="line"></span>
 <span class="line"><span style="color:#7F848E;font-style:italic">deprecated now using figures</span></span>
-<span class="line"><span style="color:#7F848E;font-style:italic">--&gt;</span></span></code></pre>
+<span class="line"><span style="color:#7F848E;font-style:italic">--></span></span></code></pre>
 <p>The new version allows for much better padding between captions and the images are actually the same size which is great, too. Unfortunately, when you view this on a small screen or mobile, they don’t seem to resize equally. So there is still more work to be done here, for example a <code>min-width</code> field in the style sheet may resolve this issue. Though I think there also need to be some modification to how the images display <code>inline</code>.</p>
 <figure>
-  <img src="/images/migrating/about_inline.png.webp" alt="Images aligned properly inline" title="Images aligned inline" loading="lazy" decoding="async" width="870" height="348">
+  <img src="/images/migrating/about_inline.png" alt="Images aligned properly inline" title="Images aligned inline">
   <figcaption>
     Images lined up as expected
   </figcaption>
 </figure>
 <figure>
-  <img src="/images/migrating/about_not_inline.png.webp" alt="Images not properly inline" title="Images not aligned inline" loading="lazy" decoding="async" width="571" height="244">
+  <img src="/images/migrating/about_not_inline.png" alt="Images not properly inline" title="Images not aligned inline">
   <figcaption>
     Images appear out of line when the screen size changes
   </figcaption>
 </figure>
 <p>Finally, the circular image at the top of the page has transparency which worked fine while running a development build of the website. However, when building with <code>Astro Paper</code>’s default build command, resizing the image this way caused issues. Attempting to modify the image size resulted either in loss of image quality or loss of the transparency layer, so I decided to leave it for now.</p>
-<img src="/images/migrating/about_circular.png.webp" alt="Picture on my about page" title="Circular picture on my about page" width="412" loading="lazy" decoding="async" height="255">
-<pre class="astro-code one-dark-pro" style="color:#abb2bf;white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&lt;</span><span style="color:#E06C75">img</span></span>
+<img src="/images/migrating/about_circular.png" alt="Picture on my about page" title="Circular picture on my about page" width="30%">
+<pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0"><code><span class="line"><span style="color:#ABB2BF">&#x3C;</span><span style="color:#E06C75">img</span></span>
 <span class="line"><span style="color:#D19A66">  align</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"right"</span></span>
 <span class="line"><span style="color:#D19A66">  src</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"/images/about/Tim_website_circle.png"</span></span>
 <span class="line"><span style="color:#D19A66">  alt</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"Tim Watson Picture Circle"</span></span>
 <span class="line"><span style="color:#D19A66">  title</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"Me"</span></span>
 <span class="line"><span style="color:#D19A66">  width</span><span style="color:#ABB2BF">=</span><span style="color:#98C379">"25%"</span></span>
-<span class="line"><span style="color:#ABB2BF">/&gt;</span></span></code></pre>
+<span class="line"><span style="color:#ABB2BF">/></span></span></code></pre>
 <p>The issue is caused by <code>jampack</code> and I wasn’t able to find any decent documentation about it. Other issues also occurred with finding the location of images during the build process, so it seemed easier to just remove <code>jampack</code> from the build stage.</p>
-<pre class="astro-code one-dark-pro" style="color:#abb2bf;white-space:pre-wrap;word-wrap:break-word;background-color:#282c34;overflow-x:auto" tabindex="0"><code><span class="line"><span style="color:#98C379">"build"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"astro build &amp;&amp; jampack ./dist"</span><span style="color:#ABB2BF">,</span></span></code></pre>
+<pre class="astro-code one-dark-pro" style="background-color:#282c34;color:#abb2bf; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0"><code><span class="line"><span style="color:#98C379">"build"</span><span style="color:#ABB2BF">: </span><span style="color:#98C379">"astro build &#x26;&#x26; jampack ./dist"</span><span style="color:#ABB2BF">,</span></span></code></pre>
 <p>From this point onwards the website was mostly styled as I wanted it to be - primarily <code>widended</code>. So with all the old pages copied over, it was pretty much ready to upload to Hostinger and start blogging…</p>
-<style>figure{align:left;text-align:center;width:49%;display:inline-block}figcaption{align:left;text-align:center;display:inline-block}</style> </article> <ul class="astro-vj4tpspi my-8"> <li class="astro-blwjyjpt inline-block my-1 underline-offset-4"> <a href="/tags/astro" class="astro-blwjyjpt group pr-2 text-sm" data-astro-transition-scope="astro-36ssibgs-2"> <svg xmlns="http://www.w3.org/2000/svg" class="astro-blwjyjpt scale-75"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-blwjyjpt"></path> </svg>
-&nbsp;<span class="astro-blwjyjpt">astro</span> </a> </li> <li class="astro-blwjyjpt inline-block my-1 underline-offset-4"> <a href="/tags/static-web-hosting" class="astro-blwjyjpt group pr-2 text-sm" data-astro-transition-scope="astro-36ssibgs-3"> <svg xmlns="http://www.w3.org/2000/svg" class="astro-blwjyjpt scale-75"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-blwjyjpt"></path> </svg>
-&nbsp;<span class="astro-blwjyjpt">static-web-hosting</span> </a> </li>  </ul> <div class="astro-vj4tpspi flex items-center flex-col-reverse gap-6 justify-between sm:flex-row-reverse sm:gap-4 sm:items-end"> <div class="astro-vj4tpspi flex justify-end"> <button id="back-to-top" class="astro-vj4tpspi focus-outline hover:opacity-75 py-1 whitespace-nowrap"> <svg xmlns="http://www.w3.org/2000/svg" class="astro-vj4tpspi rotate-90"> <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-vj4tpspi"></path> </svg> <span class="astro-vj4tpspi">Back to Top</span> </button> <!--<ShareLinks />--> </div> </div></main> <footer class="astro-sz7xmlte mt-auto"> <div class="max-w-7xl mx-auto px-0"> <hr class="border-skin-line" aria-hidden="true"> </div> <div class="astro-sz7xmlte footer-wrapper"> <div class="astro-upu6fzxr flex social-icons"> <a href="https://github.com/timrwwatson" class="astro-upu6fzxr group hover:text-skin-accent inline-block link-button" title=" Tim Watson on Github"> <svg xmlns="http://www.w3.org/2000/svg" class="icon-tabler" stroke-linecap="round" stroke-linejoin="round">
+<style>
+  figure {
+    align: left;
+    width: 49%;
+    text-align:center;
+    display: inline-block;
+  }
+
+  figcaption {
+    align: left;
+    text-align:center;
+    display: inline-block;
+  }
+</style> </article> <ul class="my-8 astro-vj4tpspi"> <li class="inline-block my-1 underline-offset-4 astro-blwjyjpt"> <a href="/tags/astro" class="text-sm pr-2 group astro-blwjyjpt" data-astro-transition-scope="astro-36ssibgs-2"> <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-blwjyjpt"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-blwjyjpt"></path> </svg>
+&nbsp;<span class="astro-blwjyjpt">astro</span> </a> </li> <li class="inline-block my-1 underline-offset-4 astro-blwjyjpt"> <a href="/tags/static-web-hosting" class="text-sm pr-2 group astro-blwjyjpt" data-astro-transition-scope="astro-36ssibgs-3"> <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-blwjyjpt"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-blwjyjpt"></path> </svg>
+&nbsp;<span class="astro-blwjyjpt">static-web-hosting</span> </a> </li>  </ul> <div class="flex flex-col-reverse items-center justify-between gap-6 sm:flex-row-reverse sm:items-end sm:gap-4 astro-vj4tpspi"> <div class="flex justify-end astro-vj4tpspi"> <button id="back-to-top" class="focus-outline whitespace-nowrap py-1 hover:opacity-75 astro-vj4tpspi"> <svg xmlns="http://www.w3.org/2000/svg" class="rotate-90 astro-vj4tpspi"> <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-vj4tpspi"></path> </svg> <span class="astro-vj4tpspi">Back to Top</span> </button> <!--<ShareLinks />--> </div> </div></main> <footer class="mt-auto astro-sz7xmlte"> <div class="max-w-7xl mx-auto px-0"> <hr class="border-skin-line" aria-hidden="true"> </div> <div class="footer-wrapper astro-sz7xmlte"> <div class="social-icons flex astro-upu6fzxr"> <a href="https://github.com/timrwwatson" class="group inline-block hover:text-skin-accent link-button astro-upu6fzxr" title=" Tim Watson on Github"> <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
-    <path d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"></path>
-  </svg> <span class="astro-upu6fzxr sr-only"> Tim Watson on Github</span> </a><a href="https://www.linkedin.com/in/timothy-r-w-watson/" class="astro-upu6fzxr group hover:text-skin-accent inline-block link-button" title="Tim Watson on LinkedIn"> <svg xmlns="http://www.w3.org/2000/svg" class="icon-tabler" stroke-linecap="round" stroke-linejoin="round">
+    <path
+      d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
+    ></path>
+  </svg> <span class="sr-only astro-upu6fzxr"> Tim Watson on Github</span> </a><a href="https://www.linkedin.com/in/timothy-r-w-watson/" class="group inline-block hover:text-skin-accent link-button astro-upu6fzxr" title="Tim Watson on LinkedIn"> <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
     <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
     <rect x="4" y="4" width="16" height="16" rx="2"></rect>
     <line x1="8" y1="11" x2="8" y2="16"></line>
     <line x1="8" y1="8" x2="8" y2="8.01"></line>
     <line x1="12" y1="16" x2="12" y2="11"></line>
     <path d="M16 16v-3a2 2 0 0 0 -4 0"></path>
-  </svg> <span class="astro-upu6fzxr sr-only">Tim Watson on LinkedIn</span> </a><a href="mailto:contact@tim-watson.com" class="astro-upu6fzxr group hover:text-skin-accent inline-block link-button" title="Send an email to Tim Watson"> <svg xmlns="http://www.w3.org/2000/svg" class="icon-tabler" stroke-linecap="round" stroke-linejoin="round">
+  </svg> <span class="sr-only astro-upu6fzxr">Tim Watson on LinkedIn</span> </a><a href="mailto:contact@tim-watson.com" class="group inline-block hover:text-skin-accent link-button astro-upu6fzxr" title="Send an email to Tim Watson"> <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
       <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
       <rect x="3" y="5" width="18" height="14" rx="2"></rect>
       <polyline points="3 7 12 13 21 7"></polyline>
-    </svg> <span class="astro-upu6fzxr sr-only">Send an email to Tim Watson</span> </a> </div>  <div class="astro-sz7xmlte copyright-wrapper"> <span class="astro-sz7xmlte">Copyright © 2024</span> <span class="astro-sz7xmlte separator">&nbsp;|&nbsp;</span> <span class="astro-sz7xmlte">All rights reserved.</span> </div> </div> </footer>     <script>function addHeadingLinks(){let c=Array.from(document.querySelectorAll("h2, h3, h4, h5, h6"));for(let d of c){d.classList.add("group");let t=document.createElement("a");t.innerText="#",t.className="heading-link hidden group-hover:inline-block ml-2",t.href="#"+d.id,t.ariaHidden="true",d.appendChild(t)}}addHeadingLinks();function attachCopyButtons(){let c="Copy",d=Array.from(document.querySelectorAll("pre"));for(let e of d){let o=document.createElement("div");o.style.position="relative";let n=document.createElement("button");n.className="copy-code absolute right-3 top-1 rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium",n.innerHTML=c,e.setAttribute("tabindex","0"),e.appendChild(n),e?.parentNode?.insertBefore(o,e),o.appendChild(e),n.addEventListener("click",async()=>{await t(e,n)})}async function t(e,o){let i=e.querySelector("code")?.innerText;await navigator.clipboard.writeText(i??""),o.innerText="Copied",setTimeout(()=>{o.innerText=c},700)}}attachCopyButtons();function backToTop(){document.querySelector("#back-to-top")?.addEventListener("click",()=>{document.body.scrollTop=0,document.documentElement.scrollTop=0})}backToTop();
-</script></body></html>
+    </svg> <span class="sr-only astro-upu6fzxr">Send an email to Tim Watson</span> </a> </div>  <div class="copyright-wrapper astro-sz7xmlte"> <span class="astro-sz7xmlte">Copyright &#169; 2024</span> <span class="separator astro-sz7xmlte">&nbsp;|&nbsp;</span> <span class="astro-sz7xmlte">All rights reserved.</span> </div> </div> </footer>   </body></html>  <script>
+  /** Attaches links to headings in the document,
+   *  allowing sharing of sections easily */
+   function addHeadingLinks() {
+    let headings = Array.from(document.querySelectorAll("h2, h3, h4, h5, h6"));
+    for (let heading of headings) {
+      heading.classList.add("group");
+      let link = document.createElement("a");
+      link.innerText = "#";
+      link.className = "heading-link hidden group-hover:inline-block ml-2";
+      link.href = "#" + heading.id;
+      link.ariaHidden = "true";
+      heading.appendChild(link);
+    }
+  }
+  addHeadingLinks();
+   /** Attaches copy buttons to code blocks in the document,
+   * allowing users to copy code easily. */
+   function attachCopyButtons() {
+    let copyButtonLabel = "Copy";
+    let codeBlocks = Array.from(document.querySelectorAll("pre"));
+
+    for (let codeBlock of codeBlocks) {
+      let wrapper = document.createElement("div");
+      wrapper.style.position = "relative";
+
+      let copyButton = document.createElement("button");
+      copyButton.className =
+        "copy-code absolute right-3 top-1 rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium";
+      copyButton.innerHTML = copyButtonLabel;
+      codeBlock.setAttribute("tabindex", "0");
+      codeBlock.appendChild(copyButton);
+
+      // wrap codebock with relative parent element
+      codeBlock?.parentNode?.insertBefore(wrapper, codeBlock);
+      wrapper.appendChild(codeBlock);
+
+      copyButton.addEventListener("click", async () => {
+        await copyCode(codeBlock, copyButton);
+      });
+    }
+
+    async function copyCode(block, button) {
+      let code = block.querySelector("code");
+      let text = code?.innerText;
+
+      await navigator.clipboard.writeText(text ?? "");
+
+      // visual feedback that task is completed
+      button.innerText = "Copied";
+
+      setTimeout(() => {
+        button.innerText = copyButtonLabel;
+      }, 700);
+    }
+  }
+  attachCopyButtons();
+
+
+  /** Scrolls the document to the top when
+   * the "Back to Top" button is clicked. */
+  function backToTop() {
+    document.querySelector("#back-to-top")?.addEventListener("click", () => {
+      document.body.scrollTop = 0; // For Safari
+      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    });
+  }
+  backToTop();
+  
+</script>
