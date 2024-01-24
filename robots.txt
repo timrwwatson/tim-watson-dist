@@ -1,5 +1,7 @@
 User-agent: Googlebot
 Disallow: /nogooglebot/
+
 User-agent: *
 Allow: /
+
 Sitemap: https://tim-watson.com/sitemap-index.xml
