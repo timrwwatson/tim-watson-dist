@@ -1,0 +1,547 @@
+<!DOCTYPE html><html lang="en" class="scroll-smooth"> <head><meta charset="UTF-8"><meta name="viewport" content="width=device-width"><link rel="icon" type="image/svg+xml" href="/favicon.svg"><link rel="canonical" href="https://tim-watson.com/posts/copy-move-semantics/"><meta name="generator" content="Astro v4.13.3"><!-- General Meta Tags --><title>Copy/Move Semantics | Tim Watson&#39;s Blog</title><meta name="title" content="Copy/Move Semantics | Tim Watson's Blog"><meta name="description" content="Explain how objects get created and moved and then some of the &#34;optimisations&#34; we need to know go on in the background, when creating and specifying objects."><meta name="author" content="Tim Watson"><link rel="sitemap" href="/sitemap-index.xml"><!-- Open Graph / Facebook --><meta property="og:title" content="Copy/Move Semantics | Tim Watson's Blog"><meta property="og:description" content="Explain how objects get created and moved and then some of the &#34;optimisations&#34; we need to know go on in the background, when creating and specifying objects."><meta property="og:url" content="https://tim-watson.com/posts/copy-move-semantics/"><meta property="og:image" content="https://tim-watson.com/"><!-- Article Published/Modified time --><meta property="article:published_time" content="2024-02-01T20:00:35.000Z"><!-- Twitter --><meta property="twitter:card" content="summary_large_image"><meta property="twitter:url" content="https://tim-watson.com/posts/copy-move-semantics/"><meta property="twitter:title" content="Copy/Move Semantics | Tim Watson's Blog"><meta property="twitter:description" content="Explain how objects get created and moved and then some of the &#34;optimisations&#34; we need to know go on in the background, when creating and specifying objects."><meta property="twitter:image" content="https://tim-watson.com/"><!-- Google Font --><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap" rel="stylesheet"><meta name="theme-color" content=""><meta name="astro-view-transitions-enabled" content="true"><meta name="astro-view-transitions-fallback" content="animate"><script src="/toggle-theme.js"></script><style>.breadcrumb:where(.astro-ilhxcym7){margin-left:auto;margin-right:auto;margin-bottom:.25rem;margin-top:2rem;width:100%;max-width:80rem;padding-left:1rem;padding-right:1rem}.breadcrumb:where(.astro-ilhxcym7) ul:where(.astro-ilhxcym7){display:flex;-moz-column-gap:.5rem;column-gap:.5rem}.breadcrumb:where(.astro-ilhxcym7) ul:where(.astro-ilhxcym7) li:where(.astro-ilhxcym7){display:flex;-moz-column-gap:.5rem;column-gap:.5rem;text-transform:capitalize;opacity:.7}.breadcrumb:where(.astro-ilhxcym7) ul:where(.astro-ilhxcym7) li:where(.astro-ilhxcym7):not(:last-child):hover{opacity:1}
+</style>
+<link rel="stylesheet" href="/_astro/about.pRQF3srT.css">
+<style>#main-content:where(.astro-hsp6otuf){margin-left:auto;margin-right:auto;width:100%;max-width:80rem;padding-left:1rem;padding-right:1rem;padding-bottom:1rem}#main-content:where(.astro-hsp6otuf) h1:where(.astro-hsp6otuf){font-size:1.5rem;line-height:2rem;font-weight:600}@media (min-width: 640px){#main-content:where(.astro-hsp6otuf) h1:where(.astro-hsp6otuf){font-size:1.875rem;line-height:2.25rem}}#main-content:where(.astro-hsp6otuf) p:where(.astro-hsp6otuf){margin-bottom:1.5rem;margin-top:.5rem;font-style:italic}
+a:where(.astro-blwjyjpt){position:relative;text-decoration-line:underline;text-decoration-style:dashed}a:where(.astro-blwjyjpt):hover{top:-.125rem;--tw-text-opacity: 1;color:rgba(var(--color-accent),var(--tw-text-opacity))}a:where(.astro-blwjyjpt):focus-visible{padding:.25rem}a:where(.astro-blwjyjpt) svg:where(.astro-blwjyjpt){margin-right:-1rem;height:1.25rem;width:1.25rem;--tw-scale-x: .75;--tw-scale-y: .75;transform:translate(var(--tw-translate-x),var(--tw-translate-y)) rotate(var(--tw-rotate)) skew(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y));--tw-text-opacity: 1;color:rgba(var(--color-text-base),var(--tw-text-opacity));opacity:.7}.group:where(.astro-blwjyjpt):hover a:where(.astro-blwjyjpt) svg:where(.astro-blwjyjpt){fill:rgb(var(--color-accent))}
+.pagination-wrapper:where(.astro-d776pwuy){margin-bottom:2rem;margin-top:auto;display:flex;justify-content:center}.disabled:where(.astro-d776pwuy){pointer-events:none;-webkit-user-select:none;-moz-user-select:none;user-select:none;opacity:.5}.disabled:where(.astro-d776pwuy):hover{--tw-text-opacity: 1;color:rgba(var(--color-text-base),var(--tw-text-opacity))}.group:where(.astro-d776pwuy):hover .disabled:where(.astro-d776pwuy){fill:rgb(var(--color-text-base))}.group:where(.astro-d776pwuy):hover .disabled-svg:where(.astro-d776pwuy){fill:rgb(var(--color-text-base))!important}
+@keyframes astroFadeInOut{0%{opacity:1}to{opacity:0}}@keyframes astroFadeIn{0%{opacity:0}}@keyframes astroFadeOut{to{opacity:0}}@keyframes astroSlideFromRight{0%{transform:translate(100%)}}@keyframes astroSlideFromLeft{0%{transform:translate(-100%)}}@keyframes astroSlideToRight{to{transform:translate(100%)}}@keyframes astroSlideToLeft{to{transform:translate(-100%)}}@media (prefers-reduced-motion){::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}[data-astro-transition-scope]{animation:none!important}}
+main:where(.astro-vj4tpspi){margin-left:auto;margin-right:auto;width:100%;max-width:80rem;padding-left:1rem;padding-right:1rem;padding-bottom:3rem}.post-title:where(.astro-vj4tpspi){font-size:1.5rem;line-height:2rem;font-weight:600;--tw-text-opacity: 1;color:rgba(var(--color-accent),var(--tw-text-opacity))}
+</style><script type="module" src="/_astro/hoisted.CSgbUlqk.js"></script><style>[data-astro-transition-scope="astro-plk3gbjq-1"] { view-transition-name: copymove-semantics; }@layer astro { ::view-transition-old(copymove-semantics) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(copymove-semantics) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(copymove-semantics) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(copymove-semantics) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-plk3gbjq-1"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-plk3gbjq-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-plk3gbjq-1"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-plk3gbjq-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-plk3gbjq-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-plk3gbjq-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-plk3gbjq-1"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-plk3gbjq-1"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style><style>[data-astro-transition-scope="astro-36ssibgs-2"] { view-transition-name: copy-construction; }@layer astro { ::view-transition-old(copy-construction) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(copy-construction) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(copy-construction) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(copy-construction) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-2"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-2"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-2"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-2"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-2"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-2"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-2"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-2"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style><style>[data-astro-transition-scope="astro-36ssibgs-3"] { view-transition-name: copy-assignment; }@layer astro { ::view-transition-old(copy-assignment) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(copy-assignment) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(copy-assignment) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(copy-assignment) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-3"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-3"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-3"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-3"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-3"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-3"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-3"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-3"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style><style>[data-astro-transition-scope="astro-36ssibgs-4"] { view-transition-name: move-construction; }@layer astro { ::view-transition-old(move-construction) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(move-construction) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(move-construction) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(move-construction) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-4"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-4"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-4"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-4"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-4"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-4"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-4"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-4"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style><style>[data-astro-transition-scope="astro-36ssibgs-5"] { view-transition-name: move-assignment; }@layer astro { ::view-transition-old(move-assignment) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(move-assignment) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(move-assignment) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(move-assignment) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-5"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-5"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-5"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-5"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-5"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-5"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-5"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-5"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style><style>[data-astro-transition-scope="astro-36ssibgs-6"] { view-transition-name: rule-of-x; }@layer astro { ::view-transition-old(rule-of-x) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(rule-of-x) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(rule-of-x) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(rule-of-x) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-6"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-6"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-6"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-6"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-6"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-6"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-6"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-6"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style><style>[data-astro-transition-scope="astro-36ssibgs-7"] { view-transition-name: c; }@layer astro { ::view-transition-old(c) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }::view-transition-new(c) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back]::view-transition-old(c) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back]::view-transition-new(c) { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; } }[data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-7"],
+			[data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-7"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-7"],
+			[data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-7"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }[data-astro-transition=back][data-astro-transition-fallback="old"] [data-astro-transition-scope="astro-36ssibgs-7"],
+			[data-astro-transition=back][data-astro-transition-fallback="old"][data-astro-transition-scope="astro-36ssibgs-7"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeOut; }[data-astro-transition=back][data-astro-transition-fallback="new"] [data-astro-transition-scope="astro-36ssibgs-7"],
+			[data-astro-transition=back][data-astro-transition-fallback="new"][data-astro-transition-scope="astro-36ssibgs-7"] { 
+	animation-duration: 180ms;
+	animation-timing-function: cubic-bezier(0.76, 0, 0.24, 1);
+	animation-fill-mode: both;
+	animation-name: astroFadeIn; }</style></head> <body>  <header class="astro-3ef6ksr2"> <a id="skip-to-content" href="#main-content" class="astro-3ef6ksr2">Skip to content</a> <div class="nav-container astro-3ef6ksr2"> <div class="top-nav-wrap astro-3ef6ksr2"> <a href="/" class="logo whitespace-nowrap astro-3ef6ksr2"> Tim Watson&#39;s Blog </a> <nav id="nav-menu" class="astro-3ef6ksr2"> <button class="hamburger-menu focus-outline astro-3ef6ksr2" aria-label="Open Menu" aria-expanded="false" aria-controls="menu-items"> <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" class="menu-icon astro-3ef6ksr2"> <line x1="7" y1="12" x2="21" y2="12" class="line astro-3ef6ksr2"></line> <line x1="3" y1="6" x2="21" y2="6" class="line astro-3ef6ksr2"></line> <line x1="12" y1="18" x2="21" y2="18" class="line astro-3ef6ksr2"></line> <line x1="18" y1="6" x2="6" y2="18" class="close astro-3ef6ksr2"></line> <line x1="6" y1="6" x2="18" y2="18" class="close astro-3ef6ksr2"></line> </svg> </button> <ul id="menu-items" class="display-none sm:flex astro-3ef6ksr2"> <li class="astro-3ef6ksr2"> <a href="/about/" class=" astro-3ef6ksr2">
+About
+</a> </li> <li class="astro-3ef6ksr2"> <a href="/posts/" class=" astro-3ef6ksr2">
+Posts
+</a> </li> <li class="astro-3ef6ksr2"> <a href="/tags/" class=" astro-3ef6ksr2">
+Tags
+</a> </li> <li class="astro-3ef6ksr2"> <a href="/search/" class="group inline-block hover:text-skin-accent focus-outline p-3 sm:p-1 flex astro-3ef6ksr2" aria-label="search" title="Search"> <svg xmlns="http://www.w3.org/2000/svg" class="scale-125 sm:scale-100 astro-3ef6ksr2"><path d="M19.023 16.977a35.13 35.13 0 0 1-1.367-1.384c-.372-.378-.596-.653-.596-.653l-2.8-1.337A6.962 6.962 0 0 0 16 9c0-3.859-3.14-7-7-7S2 5.141 2 9s3.14 7 7 7c1.763 0 3.37-.66 4.603-1.739l1.337 2.8s.275.224.653.596c.387.363.896.854 1.384 1.367l1.358 1.392.604.646 2.121-2.121-.646-.604c-.379-.372-.885-.866-1.391-1.36zM9 14c-2.757 0-5-2.243-5-5s2.243-5 5-5 5 2.243 5 5-2.243 5-5 5z" class="astro-3ef6ksr2"></path> </svg> <span class="sr-only astro-3ef6ksr2">Search</span> </a> </li> <li class="astro-3ef6ksr2"> <button id="theme-btn" class="focus-outline astro-3ef6ksr2" title="Toggles light & dark" aria-label="auto" aria-live="polite"> <svg xmlns="http://www.w3.org/2000/svg" id="moon-svg" class="astro-3ef6ksr2"> <path d="M20.742 13.045a8.088 8.088 0 0 1-2.077.271c-2.135 0-4.14-.83-5.646-2.336a8.025 8.025 0 0 1-2.064-7.723A1 1 0 0 0 9.73 2.034a10.014 10.014 0 0 0-4.489 2.582c-3.898 3.898-3.898 10.243 0 14.143a9.937 9.937 0 0 0 7.072 2.93 9.93 9.93 0 0 0 7.07-2.929 10.007 10.007 0 0 0 2.583-4.491 1.001 1.001 0 0 0-1.224-1.224zm-2.772 4.301a7.947 7.947 0 0 1-5.656 2.343 7.953 7.953 0 0 1-5.658-2.344c-3.118-3.119-3.118-8.195 0-11.314a7.923 7.923 0 0 1 2.06-1.483 10.027 10.027 0 0 0 2.89 7.848 9.972 9.972 0 0 0 7.848 2.891 8.036 8.036 0 0 1-1.484 2.059z" class="astro-3ef6ksr2"></path> </svg> <svg xmlns="http://www.w3.org/2000/svg" id="sun-svg" class="astro-3ef6ksr2"> <path d="M6.993 12c0 2.761 2.246 5.007 5.007 5.007s5.007-2.246 5.007-5.007S14.761 6.993 12 6.993 6.993 9.239 6.993 12zM12 8.993c1.658 0 3.007 1.349 3.007 3.007S13.658 15.007 12 15.007 8.993 13.658 8.993 12 10.342 8.993 12 8.993zM10.998 19h2v3h-2zm0-17h2v3h-2zm-9 9h3v2h-3zm17 0h3v2h-3zM4.219 18.363l2.12-2.122 1.415 1.414-2.12 2.122zM16.24 6.344l2.122-2.122 1.414 1.414-2.122 2.122zM6.342 7.759 4.22 5.637l1.415-1.414 2.12 2.122zm13.434 10.605-1.414 1.414-2.122-2.122 1.414-1.414z" class="astro-3ef6ksr2"></path> </svg> </button> </li> </ul> </nav> </div> </div> <div class="max-w-7xl mx-auto px-4"> <hr class="border-skin-line" aria-hidden="true"> </div> </header>   <div class="mx-auto flex w-full max-w-7xl justify-start px-2 astro-vj4tpspi"> <button class="focus-outline mb-2 mt-8 flex hover:opacity-75 astro-vj4tpspi" onclick="(() => (history.length === 1) ? window.location = '/' : history.back())()"> <svg xmlns="http://www.w3.org/2000/svg" class="astro-vj4tpspi"><path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-vj4tpspi"></path> </svg><span class="astro-vj4tpspi">Go back</span> </button> </div> <main id="main-content" class="astro-vj4tpspi"> <h1 class="post-title astro-vj4tpspi" data-astro-transition-scope="astro-plk3gbjq-1">Copy/Move Semantics</h1> <div class="flex items-center space-x-2 opacity-80 my-2 astro-vj4tpspi"><svg xmlns="http://www.w3.org/2000/svg" class="scale-100 inline-block h-6 w-6 min-w-[1.375rem] fill-skin-base" aria-hidden="true"><path d="M7 11h2v2H7zm0 4h2v2H7zm4-4h2v2h-2zm0 4h2v2h-2zm4-4h2v2h-2zm0 4h2v2h-2z"></path><path d="M5 22h14c1.103 0 2-.897 2-2V6c0-1.103-.897-2-2-2h-2V2h-2v2H9V2H7v2H5c-1.103 0-2 .897-2 2v14c0 1.103.897 2 2 2zM19 8l.001 12H5V8h14z"></path></svg><span class="sr-only">Published:</span><span class="italic text-base"><time dateTime="2024-02-01T20:00:35.000Z">Feb 1, 2024</time><span aria-hidden="true"> | </span><span class="sr-only"> at </span><span class="text-nowrap">08:00 PM</span></span></div> <article id="article" class="prose mx-auto mt-8 max-w-7xl astro-vj4tpspi"> <h2 id="table-of-contents">Table of contents</h2>
+<p></p><details><summary>Open Table of contents</summary><p></p>
+<ul>
+<li><a href="#preface">Preface</a></li>
+<li><a href="#copy-and-move">Copy and Move</a>
+<ul>
+<li><a href="#which-is-better">Which is better?</a></li>
+</ul>
+</li>
+<li><a href="#assignment-and-construction">Assignment and Construction</a></li>
+<li><a href="#rule-of-zerothreefive">Rule of Zero/Three/Five</a>
+<ul>
+<li><a href="#threefive">Three/Five</a></li>
+<li><a href="#five">Five</a></li>
+</ul>
+</li>
+<li><a href="#final-notes">Final Notes</a></li>
+</ul>
+<p></p></details><p></p>
+<h2 id="preface">Preface</h2>
+<blockquote>
+<p>If you can’t explain it simply, you don’t understand it well enough. - Albert Einstein</p>
+</blockquote>
+<p>Something became apparent to me recently while doing <code>pull requests</code>, that although I had done <a href="https://en.cppreference.com/w/cpp/language/raii">RAII</a> topics at University, it had become quite difficult for me to explain and even more difficult to apply the more specific rules of zero/three and five. So it seems like a good way to brush up on things I have become rusty on by trying to explain them as simply as possible.</p>
+<h2 id="copy-and-move">Copy and Move</h2>
+<p>As simply as can be described what does it mean to copy or to move an object?</p>
+<p>Although it might sound obvious from the names, understanding the lifecycle of an object often isn’t. So knowing what a <code>copy</code> might do vs <code>move</code>, is important when defining none-straightforward classes.</p>
+<p>Therefore, a <code>copy</code> takes the contents from one object (the data) and makes or populates another element with that data but the two objects are distinct. Updating one object would not update the second. <code>Move</code>, on the otherhand, takes that data and puts it in the new object (the ownership of that data is transferred). Thus if you <code>move</code> an object and then modify either of the references to it, both objects would reflect those changes.</p>
+<h3 id="which-is-better">Which is better?</h3>
+<p>Well <code>move</code>-ing is generally cheap, you take one object and put it or reference it somewhere else. But you need to remember to de-reference the original object (remove its ownership). <code>Copy</code> on the otherhand requires manually moving each piece of data into a completely different memory location, this is much more time consuming to do. <a href="https://www.modernescpp.com/index.php/copy-versus-move-semantic-a-few-numbers/">[1]</a></p>
+<h2 id="assignment-and-construction">Assignment and Construction</h2>
+<p>So the next logical step is to define what assignment and construction of an object is. Both <code>copy</code> and <code>move</code> have the relevant assignment and construction operations but what does this mean? Simply, it is either construction of a new object, when it is being constructed (<code>copy/move construction</code>) whereas assignment uses the <code>=</code> operator and replaces the <a href="https://en.cppreference.com/w/cpp/language/operator_assignment">contents of an already created object with another object</a>.</p>
+<p>We can have either <code>copy</code> or <code>move</code> variations of either of these operations. So we can either copy in an already existing object to construct a new object (leaving the old one) or move in that object (and the old one would be effectively deleted) <code>copy construction</code> and <code>move construction</code> respectively. Or we could use the <code>=</code> sign (assignment) to copy in the contents of an object (leaving the old one) or move in an object (removing the old one) again <code>copy assignment</code> and <code>move assignment</code>.</p>
+<h2 id="rule-of-zerothreefive">Rule of Zero/Three/Five</h2>
+<p>How does this all play out with classes? Generally, if you can avoid defining custom behaviour for the above <code>copy/move</code> operations (and <code>destructors</code>) then do (<a href="https://en.cppreference.com/w/cpp/language/rule_of_three">see here</a> and <a href="https://isocpp.github.io/CppCoreGuidelines/CppCoreGuidelines#Rc-zero">here</a>). This consitutes the <strong>rule of zero</strong>, which is an ominous way of saying we haven’t defined any of the <code>copy/move</code> functions or a custom <code>destructor</code>.</p>
+<pre class="astro-code astro-code-themes min-light night-owl" style="background-color:#ffffff;--shiki-dark-bg:#011627;color:#24292eff;--shiki-dark:#d6deeb; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="c"><code><span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">class zero</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">{</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    std::string m_someString;</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">public:</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">    zero</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">const</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> std::string</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">&#x26;</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> arg)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> : </span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">m_someString</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(arg)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> {}</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">};</span></span>
+<span class="line"></span></code></pre>
+<p>*Note: Even with a custom constructor we don’t need to define any of the other methods…</p>
+<h3 id="threefive">Three/Five</h3>
+<p>Somewhat self-explanatory therefore, are the rules of three and five, where once we define some of those methods we must define some or all of the methods respectively. The rule of three applies to the <code>copy</code> operations. So if your class requires custom/user-defined behaviour in any of the destructor or copy operations then you should define all three.</p>
+<ul>
+<li>Copy Construction</li>
+<li>Copy Assignment</li>
+<li>(custom) Destructor</li>
+</ul>
+<pre class="astro-code astro-code-themes min-light night-owl" style="background-color:#ffffff;--shiki-dark-bg:#011627;color:#24292eff;--shiki-dark:#d6deeb; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="c"><code><span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">class three</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">{</span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#C792EA">    char</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">*</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> m_cstring;</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> raw pointer used as a handle to a</span></span>
+<span class="line"><span style="color:#C2C3C5;--shiki-dark:#637777">                   //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> dynamically-allocated memory block</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">    three</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">const</span><span style="color:#D32F2F;--shiki-dark:#C792EA"> char</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">*</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> s</span><span style="color:#212121;--shiki-dark:#82AAFF">,</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> std::</span><span style="color:#D32F2F;--shiki-dark:#C792EA">size_t</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> n)</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> to avoid counting twice</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        : </span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">m_cstring</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(new </span><span style="color:#D32F2F;--shiki-dark:#C792EA">char</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">[n])</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> allocate</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    {</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">        std::memcpy</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(m_cstring</span><span style="color:#212121;--shiki-dark:#82AAFF">,</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> s</span><span style="color:#212121;--shiki-dark:#82AAFF">,</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> n)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">;</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> populate</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    }</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">public:</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    explicit </span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">three</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">const</span><span style="color:#D32F2F;--shiki-dark:#C792EA"> char</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">*</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> s </span><span style="color:#D32F2F;--shiki-dark:#C792EA">=</span><span style="color:#22863A;--shiki-dark:#D9F5DD"> ""</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">)</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        : </span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">three</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(s</span><span style="color:#212121;--shiki-dark:#82AAFF">,</span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic"> std::strlen</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(s) </span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">+</span><span style="color:#1976D2;--shiki-dark:#F78C6C"> 1</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> {}</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#7FDBCA">    ~</span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">three</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">()</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> destructor</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    {</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        delete</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">[]</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> m_cstring;</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> deallocate</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    }</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">    three</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">const</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> three</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">&#x26;</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> other)</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> copy constructor</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        : </span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">three</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#1976D2;--shiki-dark:#C5E478">other</span><span style="color:#212121;--shiki-dark:#82AAFF">.</span><span style="color:#6F42C1;--shiki-dark:#C5E478">m_cstring</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> {}</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    three</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">&#x26;</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> operator</span><span style="color:#D32F2F;--shiki-dark:#C792EA">=</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">const</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> three</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">&#x26;</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> other)</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> copy assignment</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    {</span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">        if</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> (this </span><span style="color:#D32F2F;--shiki-dark:#C792EA">==</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA"> &#x26;</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">other)</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> CHECK THESE OBJECTS AREN'T THE SAME</span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">            return</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA"> *</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">this;</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        std::</span><span style="color:#D32F2F;--shiki-dark:#C792EA">size_t</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> n{</span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">std::strlen</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#1976D2;--shiki-dark:#C5E478">other</span><span style="color:#212121;--shiki-dark:#82AAFF">.</span><span style="color:#6F42C1;--shiki-dark:#C5E478">m_cstring</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">)</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA"> +</span><span style="color:#1976D2;--shiki-dark:#F78C6C"> 1</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">};</span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#C792EA">        char</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">*</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> new_m_cstring </span><span style="color:#D32F2F;--shiki-dark:#C792EA">=</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> new </span><span style="color:#D32F2F;--shiki-dark:#C792EA">char</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">[n];</span><span style="color:#C2C3C5;--shiki-dark:#637777">            //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> allocate space to temporary store</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">        std::memcpy</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(new_m_cstring</span><span style="color:#212121;--shiki-dark:#82AAFF">,</span><span style="color:#1976D2;--shiki-dark:#C5E478"> other</span><span style="color:#212121;--shiki-dark:#82AAFF">.</span><span style="color:#6F42C1;--shiki-dark:#C5E478">m_cstring</span><span style="color:#212121;--shiki-dark:#82AAFF">,</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> n)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">;</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> populate</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        delete</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">[]</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> m_cstring;</span><span style="color:#C2C3C5;--shiki-dark:#637777">                           //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> deallocate OLD m_cstring</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        m_cstring </span><span style="color:#D32F2F;--shiki-dark:#C792EA">=</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> new_m_cstring;</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">        return</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA"> *</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">this;</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    }</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">};</span></span>
+<span class="line"></span></code></pre>
+<h3 id="five">Five</h3>
+<p>Finally, the rule of five means that all <code>copy</code> and <code>move</code> operations must be defined (and a custom destructor). This is a (relatively) new addition or extension to the rule of three. But it doesn’t mean that if you missed the <code>move</code> methods there would be a compilation error, instead your class would end up using the <code>copy</code> methods and possibly be less efficient.</p>
+<p>If you have defined a <code>destructor</code>, <code>copy constructor</code> or <code>copy assignment</code> then the compiler will not provide the class with any <code>move</code> methods. Additionally if you use <code>= default</code> or <code>= delete</code>. Therefore the class will fall back to the <code>copy</code> methods if no <code>move</code> methods are provided. So if there would be a performance benefit it may be worth implementing them!</p>
+<pre class="astro-code astro-code-themes min-light night-owl" style="background-color:#ffffff;--shiki-dark-bg:#011627;color:#24292eff;--shiki-dark:#d6deeb; overflow-x: auto; white-space: pre-wrap; word-wrap: break-word;" tabindex="0" data-language="c"><code><span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">class five</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">{</span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#C792EA">    char</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">*</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> m_cstring;</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> raw pointer used as a handle to a</span></span>
+<span class="line"><span style="color:#C2C3C5;--shiki-dark:#637777">                   //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> dynamically-allocated memory block</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">public:</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    explicit </span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">five</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">const</span><span style="color:#D32F2F;--shiki-dark:#C792EA"> char</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">*</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> s </span><span style="color:#D32F2F;--shiki-dark:#C792EA">=</span><span style="color:#22863A;--shiki-dark:#D9F5DD"> ""</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> : </span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">m_cstring</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(nullptr)</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    { </span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">        if</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> (s)</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        {</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">            std::</span><span style="color:#D32F2F;--shiki-dark:#C792EA">size_t</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> n </span><span style="color:#D32F2F;--shiki-dark:#C792EA">=</span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic"> std::strlen</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(s)</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA"> +</span><span style="color:#1976D2;--shiki-dark:#F78C6C"> 1</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">;</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">            m_cstring </span><span style="color:#D32F2F;--shiki-dark:#C792EA">=</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> new </span><span style="color:#D32F2F;--shiki-dark:#C792EA">char</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">[n];</span><span style="color:#C2C3C5;--shiki-dark:#637777">      //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> allocate</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">            std::memcpy</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(m_cstring</span><span style="color:#212121;--shiki-dark:#82AAFF">,</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> s</span><span style="color:#212121;--shiki-dark:#82AAFF">,</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> n)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">;</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> populate </span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        } </span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    }</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#7FDBCA">    ~</span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">five</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">()</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    {</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        delete</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">[]</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> m_cstring;</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> deallocate</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    }</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">    five</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">const</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> five</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">&#x26;</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> other)</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> copy constructor</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        : </span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">five</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#1976D2;--shiki-dark:#C5E478">other</span><span style="color:#212121;--shiki-dark:#82AAFF">.</span><span style="color:#6F42C1;--shiki-dark:#C5E478">m_cstring</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> {}</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">    five</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(five</span><span style="color:#D32F2F;--shiki-dark:#C792EA">&#x26;&#x26;</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> other)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> noexcept</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> move constructor</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">        : </span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">m_cstring</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">std::exchange</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#1976D2;--shiki-dark:#C5E478">other</span><span style="color:#212121;--shiki-dark:#82AAFF">.</span><span style="color:#6F42C1;--shiki-dark:#C5E478">m_cstring</span><span style="color:#212121;--shiki-dark:#82AAFF">,</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> nullptr))</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> {}</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    five</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">&#x26;</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> operator</span><span style="color:#D32F2F;--shiki-dark:#C792EA">=</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(</span><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">const</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> five</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">&#x26;</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> other)</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> copy assignment</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    {</span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">        return</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA"> *</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">this </span><span style="color:#D32F2F;--shiki-dark:#C792EA">=</span><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic"> five</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(other)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">;</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    }</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> </span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    five</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA">&#x26;</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> operator</span><span style="color:#D32F2F;--shiki-dark:#C792EA">=</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(five</span><span style="color:#D32F2F;--shiki-dark:#C792EA">&#x26;&#x26;</span><span style="color:#6F42C1;--shiki-dark:#82AAFF"> other)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB"> noexcept</span><span style="color:#C2C3C5;--shiki-dark:#637777"> //</span><span style="color:#C2C3C5;--shiki-dark:#637777;font-style:inherit;--shiki-dark-font-style:italic"> move assignment</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    {</span></span>
+<span class="line"><span style="color:#6F42C1;--shiki-dark:#82AAFF;font-style:inherit;--shiki-dark-font-style:italic">        std::swap</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">(m_cstring</span><span style="color:#212121;--shiki-dark:#82AAFF">,</span><span style="color:#1976D2;--shiki-dark:#C5E478"> other</span><span style="color:#212121;--shiki-dark:#82AAFF">.</span><span style="color:#6F42C1;--shiki-dark:#C5E478">m_cstring</span><span style="color:#6F42C1;--shiki-dark:#82AAFF">)</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">;</span></span>
+<span class="line"><span style="color:#D32F2F;--shiki-dark:#C792EA;font-style:inherit;--shiki-dark-font-style:italic">        return</span><span style="color:#D32F2F;--shiki-dark:#7FDBCA"> *</span><span style="color:#24292EFF;--shiki-dark:#D6DEEB">this;</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">    }</span></span>
+<span class="line"><span style="color:#24292EFF;--shiki-dark:#D6DEEB">};</span></span>
+<span class="line"></span></code></pre>
+<h2 id="final-notes">Final Notes</h2>
+<p>Generally if you <strong>stick</strong> with classes in the standard library and managed pointers you <code>shouldn't</code> need to worry about the lifetime of your resources. That should be handled for you. However knowing the rule of zero/three/five is much more important when you have to handle items such as raw pointers in which case it becomes your responsibility to know when and where your data is. Therefore once you start to manage your object more precisely this is when these rules become poignant and worthwhile baring in mind.</p> </article> <ul class="my-8 astro-vj4tpspi"> <li class="inline-block my-1 underline-offset-4 astro-blwjyjpt"> <a href="/tags/copy-construction/" class="text-sm pr-2 group astro-blwjyjpt" data-astro-transition-scope="astro-36ssibgs-2"> <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-blwjyjpt"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-blwjyjpt"></path> </svg>
+&nbsp;<span class="astro-blwjyjpt">copy-construction</span> </a> </li> <li class="inline-block my-1 underline-offset-4 astro-blwjyjpt"> <a href="/tags/copy-assignment/" class="text-sm pr-2 group astro-blwjyjpt" data-astro-transition-scope="astro-36ssibgs-3"> <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-blwjyjpt"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-blwjyjpt"></path> </svg>
+&nbsp;<span class="astro-blwjyjpt">copy-assignment</span> </a> </li> <li class="inline-block my-1 underline-offset-4 astro-blwjyjpt"> <a href="/tags/move-construction/" class="text-sm pr-2 group astro-blwjyjpt" data-astro-transition-scope="astro-36ssibgs-4"> <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-blwjyjpt"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-blwjyjpt"></path> </svg>
+&nbsp;<span class="astro-blwjyjpt">move-construction</span> </a> </li> <li class="inline-block my-1 underline-offset-4 astro-blwjyjpt"> <a href="/tags/move-assignment/" class="text-sm pr-2 group astro-blwjyjpt" data-astro-transition-scope="astro-36ssibgs-5"> <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-blwjyjpt"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-blwjyjpt"></path> </svg>
+&nbsp;<span class="astro-blwjyjpt">move-assignment</span> </a> </li> <li class="inline-block my-1 underline-offset-4 astro-blwjyjpt"> <a href="/tags/rule-of-x/" class="text-sm pr-2 group astro-blwjyjpt" data-astro-transition-scope="astro-36ssibgs-6"> <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-blwjyjpt"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-blwjyjpt"></path> </svg>
+&nbsp;<span class="astro-blwjyjpt">rule-of-x</span> </a> </li> <li class="inline-block my-1 underline-offset-4 astro-blwjyjpt"> <a href="/tags/c/" class="text-sm pr-2 group astro-blwjyjpt" data-astro-transition-scope="astro-36ssibgs-7"> <svg xmlns="http://www.w3.org/2000/svg" class=" scale-75 astro-blwjyjpt"><path d="M16.018 3.815 15.232 8h-4.966l.716-3.815-1.964-.37L8.232 8H4v2h3.857l-.751 4H3v2h3.731l-.714 3.805 1.965.369L8.766 16h4.966l-.714 3.805 1.965.369.783-4.174H20v-2h-3.859l.751-4H21V8h-3.733l.716-3.815-1.965-.37zM14.106 14H9.141l.751-4h4.966l-.752 4z" class="astro-blwjyjpt"></path> </svg>
+&nbsp;<span class="astro-blwjyjpt">c</span> </a> </li>  </ul> <div class="flex flex-col-reverse items-center justify-between gap-6 sm:flex-row-reverse sm:items-end sm:gap-4 astro-vj4tpspi"> <div class="flex justify-end astro-vj4tpspi"> <button id="back-to-top" class="focus-outline whitespace-nowrap py-1 hover:opacity-75 astro-vj4tpspi"> <svg xmlns="http://www.w3.org/2000/svg" class="rotate-90 astro-vj4tpspi"> <path d="M13.293 6.293 7.586 12l5.707 5.707 1.414-1.414L10.414 12l4.293-4.293z" class="astro-vj4tpspi"></path> </svg> <span class="astro-vj4tpspi">Back to Top</span> </button> <!--<ShareLinks />--> </div> </div></main> <footer class="mt-auto astro-sz7xmlte"> <div class="max-w-7xl mx-auto px-0"> <hr class="border-skin-line" aria-hidden="true"> </div> <div class="footer-wrapper astro-sz7xmlte"> <div class="social-icons flex astro-upu6fzxr"> <a href="https://github.com/timrwwatson" class="group inline-block hover:text-skin-accent link-button astro-upu6fzxr" title=" Tim Watson on Github"> <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <path
+      d="M9 19c-4.3 1.4 -4.3 -2.5 -6 -3m12 5v-3.5c0 -1 .1 -1.4 -.5 -2c2.8 -.3 5.5 -1.4 5.5 -6a4.6 4.6 0 0 0 -1.3 -3.2a4.2 4.2 0 0 0 -.1 -3.2s-1.1 -.3 -3.5 1.3a12.3 12.3 0 0 0 -6.2 0c-2.4 -1.6 -3.5 -1.3 -3.5 -1.3a4.2 4.2 0 0 0 -.1 3.2a4.6 4.6 0 0 0 -1.3 3.2c0 4.6 2.7 5.7 5.5 6c-.6 .6 -.6 1.2 -.5 2v3.5"
+    ></path>
+  </svg> <span class="sr-only astro-upu6fzxr"> Tim Watson on Github</span> </a><a href="https://www.linkedin.com/in/timothy-r-w-watson/" class="group inline-block hover:text-skin-accent link-button astro-upu6fzxr" title="Tim Watson on LinkedIn"> <svg
+    xmlns="http://www.w3.org/2000/svg"
+    class="icon-tabler"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  >
+    <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+    <rect x="4" y="4" width="16" height="16" rx="2"></rect>
+    <line x1="8" y1="11" x2="8" y2="16"></line>
+    <line x1="8" y1="8" x2="8" y2="8.01"></line>
+    <line x1="12" y1="16" x2="12" y2="11"></line>
+    <path d="M16 16v-3a2 2 0 0 0 -4 0"></path>
+  </svg> <span class="sr-only astro-upu6fzxr">Tim Watson on LinkedIn</span> </a><a href="mailto:contact@tim-watson.com" class="group inline-block hover:text-skin-accent link-button astro-upu6fzxr" title="Send an email to Tim Watson"> <svg
+      xmlns="http://www.w3.org/2000/svg"
+      class="icon-tabler"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    >
+      <path stroke="none" d="M0 0h24v24H0z" fill="none"></path>
+      <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+      <polyline points="3 7 12 13 21 7"></polyline>
+    </svg> <span class="sr-only astro-upu6fzxr">Send an email to Tim Watson</span> </a> </div>  <div class="copyright-wrapper astro-sz7xmlte"> <span class="astro-sz7xmlte">Copyright &#169; 2024</span> <span class="separator astro-sz7xmlte">&nbsp;|&nbsp;</span> <span class="astro-sz7xmlte">All rights reserved.</span> </div> </div> </footer>   </body></html>  <script>
+  /** Create a progress indicator
+   *  at the top */
+   function createProgressBar() {
+    // Create the main container div
+    const progressContainer = document.createElement("div");
+    progressContainer.className =
+      "progress-container fixed top-0 z-10 h-1 w-full bg-skin-fill";
+
+    // Create the progress bar div
+    const progressBar = document.createElement("div");
+    progressBar.className = "progress-bar h-1 w-0 bg-skin-accent";
+    progressBar.id = "myBar";
+
+    // Append the progress bar to the progress container
+    progressContainer.appendChild(progressBar);
+
+    // Append the progress container to the document body or any other desired parent element
+    document.body.appendChild(progressContainer);
+  }
+  createProgressBar();
+
+  /** Update the progress bar
+   *  when user scrolls */
+  function updateScrollProgress() {
+    const winScroll =
+      document.body.scrollTop || document.documentElement.scrollTop;
+    const height =
+      document.documentElement.scrollHeight -
+      document.documentElement.clientHeight;
+    const scrolled = (winScroll / height) * 100;
+    if (document) {
+      const myBar = document.getElementById("myBar");
+      if (myBar) {
+        myBar.style.width = scrolled + "%";
+      }
+    }
+  }
+  document.addEventListener("scroll", updateScrollProgress);
+  
+  /** Attaches links to headings in the document,
+   *  allowing sharing of sections easily */
+   function addHeadingLinks() {
+    let headings = Array.from(document.querySelectorAll("h2, h3, h4, h5, h6"));
+    for (let heading of headings) {
+      heading.classList.add("group");
+      const link = document.createElement("a");
+      link.className =
+        "heading-link ml-2 opacity-0 group-hover:opacity-100 focus:opacity-100";
+      link.href = "#" + heading.id;
+
+      const span = document.createElement("span");
+      span.ariaHidden = "true";
+      span.innerText = "#";
+      link.appendChild(span);
+      heading.appendChild(link);
+    }
+  }
+  addHeadingLinks();
+   /** Attaches copy buttons to code blocks in the document,
+   * allowing users to copy code easily. */
+   function attachCopyButtons() {
+    let copyButtonLabel = "Copy";
+    let codeBlocks = Array.from(document.querySelectorAll("pre"));
+
+    for (let codeBlock of codeBlocks) {
+      let wrapper = document.createElement("div");
+      wrapper.style.position = "relative";
+
+      let copyButton = document.createElement("button");
+      copyButton.className =
+        "copy-code absolute right-3 top-1 rounded bg-skin-card px-2 py-1 text-xs leading-4 text-skin-base font-medium";
+      copyButton.innerHTML = copyButtonLabel;
+      codeBlock.setAttribute("tabindex", "0");
+      codeBlock.appendChild(copyButton);
+
+      // wrap codebock with relative parent element
+      codeBlock?.parentNode?.insertBefore(wrapper, codeBlock);
+      wrapper.appendChild(codeBlock);
+
+      copyButton.addEventListener("click", async () => {
+        await copyCode(codeBlock, copyButton);
+      });
+    }
+
+    async function copyCode(block, button) {
+      let code = block.querySelector("code");
+      let text = code?.innerText;
+
+      await navigator.clipboard.writeText(text ?? "");
+
+      // visual feedback that task is completed
+      button.innerText = "Copied";
+
+      setTimeout(() => {
+        button.innerText = copyButtonLabel;
+      }, 700);
+    }
+  }
+  attachCopyButtons();
+
+
+  /** Scrolls the document to the top when
+   * the "Back to Top" button is clicked. */
+  function backToTop() {
+    document.querySelector("#back-to-top")?.addEventListener("click", () => {
+      document.body.scrollTop = 0; // For Safari
+      document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
+    });
+  }
+  backToTop();
+  
+</script>
